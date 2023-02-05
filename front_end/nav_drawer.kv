@@ -1,0 +1,236 @@
+<MyAppTopAppBar@MDTopAppBar>:
+#   This is a reusable structure
+    title: "Username"
+#    elevation: 10
+    pos_hint: {"top": 1}
+    left_action_items: [["menu", lambda x: app.open_menu()]]
+    right_action_items: [["logout", lambda x: app.exit_app()]]
+
+<MyLoginAndRegToolbar@MDTopAppBar>:
+#    This is a reusable structure
+    title: "Mental"
+    pos_hint:{"top": 1}
+
+AppLayout:
+#   This is what's called 'root' in nav_drawer.py
+    id: my_layout
+    orientation: 'vertical'
+    app_name: "Mental"
+
+    MDScreenManager:
+        id: login_screen_manager
+
+        MDScreen:
+            id: login_screen
+            name: "Login"
+
+            MyLoginAndRegToolbar:
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "20dp"
+                spacing: "16dp"
+                size_hint_y: None
+                height: self.minimum_height
+                pos_hint: {"center_y": .6}
+
+                MDLabel:
+                    text: "Log In"
+                    halign: "center"
+                    font_style: "H4"
+                    size_hint_y: None
+                MDTextField:
+                    id: username
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: .35
+                    hint_text: "Username "
+                    helper_text_mode: "on_focus"
+                    required: True
+                    write_tab: False
+                MDTextField:
+                    id: password
+                    hint_text: "Password "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: .35
+                    helper_text_mode: "on_focus"
+                    required: True
+                    password: True
+                    write_tab: False
+
+                MDRaisedButton:
+                    id: login_button
+                    text: "LOGIN"
+                    pos_hint: {"center_x": 0.5}
+                    on_release: root.check_data_login()
+
+                MDTextButton:
+                    id: reg_button
+                    text: "Register"
+                    color: 0, 0.5, 1
+                    pos_hint: {"center_x": 0.5}
+                    on_release:
+                        login_screen_manager.current = "Registration"
+                        login_screen_manager.transition.direction = "left"
+
+        MDScreen:
+            id: reg_screen
+            name: "Registration"
+
+            MyLoginAndRegToolbar:
+                right_action_items: [["logout", lambda x: app.exit_app()]]
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "20dp"
+                spacing: "16dp"
+                size_hint_y: None
+                height: self.minimum_height
+                pos_hint: {"center_y": .5}
+
+                MDLabel:
+                    text: "Registration"
+                    halign: "center"
+                    font_style: "H4"
+                    size_hint_y: None
+                MDTextField:
+                    id: reg_name
+                    hint_text: "Name "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: .35
+                    helper_text_mode: "on_focus"
+                    required: True
+                    write_tab: False
+                MDTextField:
+                    id: reg_email
+                    hint_text: "Email "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: .35
+                    helper_text_mode: "on_focus"
+                    required: True
+                    write_tab: False
+                MDTextField:
+                    id: reg_password
+                    hint_text: "Password "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: .35
+                    helper_text_mode: "on_focus"
+                    required: True
+                    password: True
+                    write_tab: False
+                MDTextField:
+                    id: reg_confirm_password
+                    hint_text: "Confirm password "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: .35
+                    helper_text_mode: "on_focus"
+                    required: True
+                    password: True
+                    write_tab: False
+                    helper_text: "" if reg_confirm_password.text=='' else "Passwords do not match" if reg_confirm_password.text!=reg_password.text else "Perfect!"
+                    helper_text_mode: "on_focus" if reg_confirm_password.text=='' else "on_error" if reg_confirm_password.text!=reg_password.text else "on_focus"
+                    error : False if reg_confirm_password.text=='' else True if reg_confirm_password.text!=reg_password.text else False
+
+                MDRaisedButton:
+                    id: reg_button
+                    text: "Register"
+                    pos_hint: {"center_x": 0.5}
+                    on_release: root.validate_reg(reg_name, reg_email, reg_password)
+
+        MDScreen:
+            id: app_screen
+            name: "Application"
+
+            MyAppTopAppBar:
+
+            MDNavigationLayout:
+
+                MDScreenManager:
+                    id: app_screen_manager
+
+                    MDScreen:
+                        id: home_screen
+                        name: "Home"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "Home"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+                    MDScreen:
+                        id: settings_screen
+                        name: "Settings"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "Settings"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+                    MDScreen:
+                        id: stats_screen
+                        name: "Stats"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "Stats"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+                    MDScreen:
+                        id: about_screen
+                        name: "About"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "About"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+
+                MDNavigationDrawer:
+                    id: nav_drawer
+
+                    MDNavigationDrawerMenu:
+
+                        MDNavigationDrawerHeader:
+                            title: "Menu Header Title"
+                            text: "Menu Header Text"
+        #                    padding: "12dp", 0, 0, "56dp"
+
+        #               See icon name at https://pictogrammers.com/library/mdi/
+                        MDNavigationDrawerItem:
+                            icon: "home"
+                            text: "Home"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "cog"
+                            text: "Settings"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "chart-line"
+                            text: "Stats"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "information-variant"
+                            text: "About"
+                            on_release: app.on_menu_click(self.text)
