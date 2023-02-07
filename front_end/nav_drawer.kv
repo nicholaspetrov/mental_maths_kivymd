@@ -40,10 +40,10 @@ AppLayout:
                     font_style: "H4"
                     size_hint_y: None
                 MDTextField:
-                    id: username
+                    id: email
                     pos_hint: {"center_x": .5}
                     size_hint_x: .35
-                    hint_text: "Username "
+                    hint_text: "Email "
                     helper_text_mode: "on_focus"
                     required: True
                     write_tab: False
@@ -65,12 +65,13 @@ AppLayout:
 
                 MDTextButton:
                     id: reg_button
-                    text: "Register"
+                    text: "Haven't got an account? Register"
                     color: 0, 0.5, 1
                     pos_hint: {"center_x": 0.5}
                     on_release:
                         login_screen_manager.current = "Registration"
                         login_screen_manager.transition.direction = "left"
+                        root.clear_login_fields()
 
         MDScreen:
             id: reg_screen
@@ -136,6 +137,16 @@ AppLayout:
                     pos_hint: {"center_x": 0.5}
                     on_release: root.validate_reg(reg_name, reg_email, reg_password)
 
+                MDTextButton:
+                    id: login_button
+                    text: "Already have an account? Login"
+                    color: 0, 0.5, 1
+                    pos_hint: {"center_x": 0.5}
+                    on_release:
+                        login_screen_manager.current = "Login"
+                        login_screen_manager.transition.direction = "right"
+                        root.clear_register_fields()
+
         MDScreen:
             id: app_screen
             name: "Application"
@@ -173,7 +184,6 @@ AppLayout:
                                     text: "Settings"
                                     halign: "center"
                                     font_style: "H4"
-                                    size_hint_y: None
 
                     MDScreen:
                         id: stats_screen

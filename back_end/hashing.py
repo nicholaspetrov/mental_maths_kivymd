@@ -45,23 +45,15 @@ def hashing(value):
     # Number randomly generated to xor against total of numbers in xor_comparisons
     total = str(sum(xor_comparisons))
     random_number = total[len(total) - 2:]
-    # print(total)
-    # print(random_number)
 
-    users[email_input][1] = random_number
     # Hash generated
-    users[email_input][2] = hex(ord(chr(int(total) ^ int(random_number))))
-
-    # print('Last 2 digits of total:', random_number)
-    # print('Hash:', hex(ord(chr(int(total) ^ int(random_number)))))
+    hashed_password = hex(ord(chr(int(total) ^ int(random_number))))
+    return hashed_password
 
 
 def password_to_denary(password):
     value = []
     salt = create_salt()
-    # print('Salt:', salt)
-    users[email_input][0] = salt
-
     # Each character of password converted to denary and stored in list value
     for letter in password:
         number = ord(letter)
@@ -73,31 +65,39 @@ def password_to_denary(password):
         value.append(number)
 
     # print('Password and salt in binary:', value)
-    hashing(value)
+    hashed_password = hashing(value)
+    return salt, hashed_password
 
 
-email_input = input('Email: ')
-users = {email_input: ['', '', '']}
-password = input('Password: ')
+def login(password, salt):
+    value = []
+    for letter in password:
+        number = ord(letter)
+        value.append(number)
 
-password_to_denary(password=password)
-print(users)
+    for letter in salt:
+        number = ord(letter)
+        value.append(number)
 
-# conn = sqlite3.connect('test_database.db')
-# c = conn.cursor()
-# c.execute('''
-#           CREATE TABLE IF NOT EXISTS passwords
-#           (
-#               [email] TEXT PRIMARY KEY NOT NULL,
-#               [hash] TEXT NOT NULL,
-#               [salt] TEXT NOT NULL
-#           )
-#           ''')
-# c.execute('INSERT INTO passwords VALUES (?, ?, ?)', (email_input, users[email_input][2], users[email_input][0]))
-# conn.commit()
+    extra = 74
+    if len(value) % 2 == 0:
+        pass
+    else:
+        value.append(extra)
 
-'''
-TODO:
-- When user logs back in, retrieve salt and random number used the first time, run password + salt through hashing algorithm to see that it returns the same hash, allowing user to log back in
-- SQL: Prevent multiple users with same email logging in
-'''
+    # Grouping every 2 items in list value
+    start = 0
+    end = len(value)
+    step = 2
+    xor_comparisons = []
+
+    for i in range(start, end, step):
+        comparison = (value[i:i + step])
+        xor_comparison = comparison[0] ^ comparison[1]
+        xor_comparisons.append(xor_comparison)
+
+    total = str(sum(xor_comparisons))
+    random_number = total[len(total) - 2:]
+
+    hashed_password = hex(ord(chr(int(total) ^ int(random_number))))
+    return hashed_password
