@@ -1,6 +1,5 @@
 import sqlite3
 from back_end.hashing import login
-from loguru import logger
 
 
 def create_password_table():
@@ -64,5 +63,4 @@ def check_user_exists(email, password):
             return False
         return check_login(email, password)
     except Exception as e:
-        logger.error(e)
         return False
