@@ -1,5 +1,6 @@
 import sqlite3
 from back_end.hashing import login
+from loguru import logger
 
 
 def create_password_table():
@@ -46,32 +47,22 @@ def check_login(email, password):
     record = c.fetchall()
     salt = record[0][2]
     hashed_pwd = record[0][3]
-    print(salt)
-    print(hashed_pwd)
     if hashed_pwd == login(password, salt):
-        conn.commit()
         return True
     else:
-        conn.commit()
         return False
 
 
 def check_user_exists(email, password):
-    conn = sqlite3.connect('mental_database.db')
-    c = conn.cursor()
-    sql = "SELECT * FROM passwords WHERE email = ?"
-    c.execute(sql, (email,))
-    record = c.fetchall()
-    if len(record) == 0:
-        conn.commit()
+    try:
+        conn = sqlite3.connect('mental_database.db')
+        c = conn.cursor()
+        sql = "SELECT * FROM passwords WHERE email = ?"
+        c.execute(sql, (email,))
+        record = c.fetchall()
+        if len(record) == 0:
+            return False
+        return check_login(email, password)
+    except Exception as e:
+        logger.error(e)
         return False
-    else:
-        check_login(email, password)
-        conn.commit()
-        return True
-
-
-
-
-
-
