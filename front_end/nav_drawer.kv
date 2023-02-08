@@ -135,7 +135,7 @@ AppLayout:
                     id: reg_button
                     text: "Register"
                     pos_hint: {"center_x": 0.5}
-                    on_release: root.validate_reg(reg_name, reg_email, reg_password)
+                    on_release: root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
 
                 MDTextButton:
                     id: login_button
