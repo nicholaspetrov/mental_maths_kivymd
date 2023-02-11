@@ -1,5 +1,4 @@
 from kivy.lang import Builder
-
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.app import MDApp
 from kivymd.toast import toast
@@ -72,6 +71,7 @@ class AppLayout(MDBoxLayout):
         # Making sure all input login fields are filled
         if name.text == '':
             toast('Name required')
+            # Returning nothing prevents user advancing from current page (i.e. user has to check their inputs)
             return
 
         if email.text == '':
@@ -80,6 +80,14 @@ class AppLayout(MDBoxLayout):
 
         if password.text == '' or confirm_password.text == '':
             toast('Password(s) required')
+            return
+
+        if password.text != confirm_password.text:
+            # No toast since message (passwords not the same) is already displayed under textfield dynamically
+            return
+
+        if len(password.text) < 6:
+            # No toast since message (passwords length less than 6) is already displayed under textfield dynamically
             return
 
         # Passwords table created in database
@@ -118,10 +126,36 @@ class NavDrawer(MDApp):
         self.root.ids.login_screen_manager.transition.direction = "right"
 
 
+class Test:
+    def __init__(self):
+        pass
+
+
+class User:
+    def __init__(self, acd, lts):
+        self.AccountCreationDate = acd
+        self.LoginTimeStamps = lts
+
+
+    def attach_test(self, __test):
+        self.__test = __test
+
+    def get_test(self) -> Test:
+        return self.__test
+
+
+u = User("", "")
+u.attach_test(Test())
+
+u.get_test()
+
+
 NavDrawer().run()
 
 '''
 TODO:
-- Change TopAppBar title with username when logged in
+- Change TopAppBar title with username or page name when logged in
 - "Save db file into backend python package"
+- Enable update button once something has been changed in settings page
+- Position update button to middle
 '''

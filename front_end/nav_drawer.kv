@@ -7,12 +7,10 @@
     right_action_items: [["logout", lambda x: app.exit_app()]]
 
 <MyLoginAndRegToolbar@MDTopAppBar>:
-#    This is a reusable structure
     title: "Mental"
     pos_hint:{"top": 1}
 
 AppLayout:
-#   This is what's called 'root' in nav_drawer.py
     id: my_layout
     orientation: 'vertical'
     app_name: "Mental"
@@ -45,7 +43,6 @@ AppLayout:
                     size_hint_x: .35
                     hint_text: "Email "
                     helper_text_mode: "on_focus"
-                    required: True
                     write_tab: False
                 MDTextField:
                     id: password
@@ -53,7 +50,6 @@ AppLayout:
                     pos_hint: {"center_x": .5}
                     size_hint_x: .35
                     helper_text_mode: "on_focus"
-                    required: True
                     password: True
                     write_tab: False
 
@@ -99,7 +95,6 @@ AppLayout:
                     pos_hint: {"center_x": .5}
                     size_hint_x: .35
                     helper_text_mode: "on_focus"
-                    required: True
                     write_tab: False
                 MDTextField:
                     id: reg_email
@@ -107,15 +102,15 @@ AppLayout:
                     pos_hint: {"center_x": .5}
                     size_hint_x: .35
                     helper_text_mode: "on_focus"
-                    required: True
                     write_tab: False
                 MDTextField:
                     id: reg_password
                     hint_text: "Password "
                     pos_hint: {"center_x": .5}
                     size_hint_x: .35
-                    helper_text_mode: "on_focus"
-                    required: True
+                    helper_text: "" if reg_password.text=='' else "Password has to be at least 6 characters long" if len(reg_password.text)<6 else ""
+                    helper_text_mode: "on_focus" if reg_password.text=='' else "on_error" if len(reg_password.text)<6 else "on_focus"
+                    error : False if reg_password.text=='' else True if len(reg_password.text)<6 else False
                     password: True
                     write_tab: False
                 MDTextField:
@@ -124,10 +119,9 @@ AppLayout:
                     pos_hint: {"center_x": .5}
                     size_hint_x: .35
                     helper_text_mode: "on_focus"
-                    required: True
                     password: True
                     write_tab: False
-                    helper_text: "" if reg_confirm_password.text=='' else "Passwords do not match" if reg_confirm_password.text!=reg_password.text else "Perfect!"
+                    helper_text: "" if reg_confirm_password.text=='' else "Passwords do not match" if reg_confirm_password.text!=reg_password.text else ""
                     helper_text_mode: "on_focus" if reg_confirm_password.text=='' else "on_error" if reg_confirm_password.text!=reg_password.text else "on_focus"
                     error : False if reg_confirm_password.text=='' else True if reg_confirm_password.text!=reg_password.text else False
 
@@ -135,7 +129,8 @@ AppLayout:
                     id: reg_button
                     text: "Register"
                     pos_hint: {"center_x": 0.5}
-                    on_release: root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
+                    on_release:
+                        root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
 
                 MDTextButton:
                     id: login_button
@@ -176,14 +171,53 @@ AppLayout:
                         id: settings_screen
                         name: "Settings"
 
-                        MDBoxLayout:
-                            orientation: "vertical"
+                        MDGridLayout:
+                            padding: "20dp"
+                            cols: 2
 
+                            MDLabel:
+                                text: "Change password:"
+                                font_size: 20
                             MDBoxLayout:
-                                MDLabel:
-                                    text: "Settings"
-                                    halign: "center"
-                                    font_style: "H4"
+                                padding: "20dp"
+                                orientation: "vertical"
+                                size_hint_y: None
+                                MDTextField:
+                                    id: old_password
+                                    hint_text: "Enter old password "
+                                    password: True
+                                    write_tab: False
+                                MDTextField:
+                                    id: new_password
+                                    hint_text: "Enter new password "
+                                    helper_text: "" if new_password.text=='' else "Password has to be at least 6 characters long" if len(new_password.text)<6 else ""
+                                    helper_text_mode: "on_focus" if new_password.text=='' else "on_error" if len(new_password.text)<6 else "on_focus"
+                                    error : False if new_password.text=='' else True if len(new_password.text)<6 else False
+                                    password: True
+                                    write_tab: False
+                                MDTextField:
+                                    id: confirm_new_password
+                                    hint_text: "Re-enter new password "
+                                    helper_text: "" if confirm_new_password.text=='' else "Passwords do not match" if confirm_new_password.text!=new_password.text else ""
+                                    helper_text_mode: "on_focus" if confirm_new_password.text=='' else "on_error" if confirm_new_password.text != new_password.text else "on_focus"
+                                    error: False if confirm_new_password.text=='' else True if confirm_new_password.text!=new_password.text else False
+                                    password: True
+                                    write_tab: False
+
+                            MDLabel:
+                                text: "Mute sound effects:"
+                                font_size: 20
+                            MDCheckbox:
+
+                            MDLabel:
+                                text: "Show performance anonymously:"
+                                font_size: 20
+                            MDCheckbox:
+
+
+                        MDRaisedButton:
+                            text: "Update"
+                            disabled: False
 
                     MDScreen:
                         id: stats_screen
@@ -220,11 +254,10 @@ AppLayout:
                     MDNavigationDrawerMenu:
 
                         MDNavigationDrawerHeader:
-                            title: "Menu Header Title"
-                            text: "Menu Header Text"
-        #                    padding: "12dp", 0, 0, "56dp"
+                            title: "Arithmo"
+                            text: "Nick Petrov"
 
-        #               See icon name at https://pictogrammers.com/library/mdi/
+        #               https://pictogrammers.com/library/mdi/
                         MDNavigationDrawerItem:
                             icon: "home"
                             text: "Home"

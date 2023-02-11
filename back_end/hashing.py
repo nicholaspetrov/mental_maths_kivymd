@@ -2,14 +2,14 @@ import random
 
 '''
 How my hashing algorithm works:
-1. Password and salt converted to binary and stored in list value
+1. Password and salt converted to denary and stored in list value
 2. Length of value is checked if even and if not, number 74 added (randomly chosen by programmer)
 3. Neighbouring items in value split into pairs
 4. Items in each pair XOR'ed against each other
 5. Output of each comparison between pair stored in list new
 6. Sum of new calculated
 7. Random number chosen (last 2 digits of total) to XOR against sum of new outputting hash
-8. Hash, salt, randomly chosen number stored to refer back to for user logging back in
+8. Hash, salt stored to refer back to for user logging back in
 '''
 
 
