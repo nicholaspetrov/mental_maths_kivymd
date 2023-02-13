@@ -1,0 +1,382 @@
+<MyAppTopAppBar@MDTopAppBar>:
+#   This is a reusable structure
+    title: "Username"
+#    elevation: 10
+    pos_hint: {"top": 1}
+    left_action_items: [["menu", lambda x: app.open_menu()]]
+    right_action_items: [["logout", lambda x: app.exit_app()]]
+
+<MyLoginAndRegToolbar@MDTopAppBar>:
+    title: "Mental"
+    pos_hint:{"top": 1}
+
+AppLayout:
+    id: my_layout
+    orientation: 'vertical'
+    app_name: "Mental"
+
+    MDScreenManager:
+        id: login_screen_manager
+
+        MDScreen:
+            id: login_screen
+            name: "Login"
+
+            MyLoginAndRegToolbar:
+
+            MDCard:
+                size_hint: None, None
+                size: 300, 400
+                pos_hint: {"center_x": 0.5, "center_y":0.5}
+                padding: 25
+                spacing: 25
+                orientation: 'vertical'
+
+                MDLabel:
+                    text: "Log In"
+                    halign: "center"
+                    font_style: "H4"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    padding_y: 15
+                MDTextField:
+                    id: email
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: None
+                    width: 200
+                    hint_text: "Email "
+                    helper_text_mode: "on_focus"
+                    write_tab: False
+                MDTextField:
+                    id: password
+                    hint_text: "Password "
+                    pos_hint: {"center_x": .5}
+                    width: 200
+                    size_hint_x: None
+                    helper_text_mode: "on_focus"
+                    password: True
+                    write_tab: False
+
+                MDRaisedButton:
+                    id: login_button
+                    text: "LOGIN"
+                    pos_hint: {"center_x": 0.5}
+                    on_release: root.check_data_login()
+
+                MDTextButton:
+                    id: reg_button
+                    text: "Haven't got an account? Register"
+                    color: 0, 0.5, 1
+                    pos_hint: {"center_x": 0.5}
+                    on_release:
+                        login_screen_manager.current = "Registration"
+                        login_screen_manager.transition.direction = "left"
+                        root.clear_login_fields()
+
+        MDScreen:
+            id: reg_screen
+            name: "Registration"
+
+            MyLoginAndRegToolbar:
+                right_action_items: [["logout", lambda x: app.exit_app()]]
+
+            MDCard:
+                size_hint: None, None
+                size: 300, 450
+                pos_hint: {"center_x": 0.5, "center_y":0.5}
+                padding: 25
+                spacing: 10
+                orientation: 'vertical'
+
+                MDLabel:
+                    text: "Registration"
+                    halign: "center"
+                    font_style: "H4"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                MDTextField:
+                    id: reg_name
+                    hint_text: "Name "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: None
+                    helper_text_mode: "on_focus"
+                    write_tab: False
+                    width: 200
+                MDTextField:
+                    id: reg_email
+                    hint_text: "Email "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: None
+                    helper_text_mode: "on_focus"
+                    write_tab: False
+                    width: 200
+                MDTextField:
+                    id: reg_password
+                    hint_text: "Password "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: None
+                    helper_text: "" if reg_password.text=='' else "Password has to be at least 6 characters long" if len(reg_password.text)<6 else ""
+                    helper_text_mode: "on_focus" if reg_password.text=='' else "on_error" if len(reg_password.text)<6 else "on_focus"
+                    error : False if reg_password.text=='' else True if len(reg_password.text)<6 else False
+                    password: True
+                    write_tab: False
+                    width: 200
+                MDTextField:
+                    id: reg_confirm_password
+                    hint_text: "Confirm password "
+                    pos_hint: {"center_x": .5}
+                    size_hint_x: None
+                    helper_text_mode: "on_focus"
+                    password: True
+                    write_tab: False
+                    helper_text: "" if reg_confirm_password.text=='' else "Passwords do not match" if reg_confirm_password.text!=reg_password.text else ""
+                    helper_text_mode: "on_focus" if reg_confirm_password.text=='' else "on_error" if reg_confirm_password.text!=reg_password.text else "on_focus"
+                    error : False if reg_confirm_password.text=='' else True if reg_confirm_password.text!=reg_password.text else False
+                    width: 200
+
+                MDRaisedButton:
+                    id: reg_button
+                    text: "Register"
+                    pos_hint: {"center_x": 0.5}
+                    on_release:
+                        root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
+
+                MDTextButton:
+                    id: login_button
+                    text: "Already have an account? Login"
+                    color: 0, 0.5, 1
+                    pos_hint: {"center_x": 0.5}
+                    on_release:
+                        login_screen_manager.current = "Login"
+                        login_screen_manager.transition.direction = "right"
+                        root.clear_register_fields()
+
+        MDScreen:
+            id: app_screen
+            name: "Application"
+
+            MyAppTopAppBar:
+
+            MDNavigationLayout:
+
+                MDScreenManager:
+                    id: app_screen_manager
+
+                    MDScreen:
+                        id: home_screen
+                        name: "Home"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDLabel:
+                                text: "Home1"
+                                halign: "center"
+                                font_style: "H4"
+                                size_hint_y: None
+
+                            MDLabel:
+                                text: "Home2"
+                                halign: "center"
+                                font_style: "H4"
+                                size_hint_y: None
+
+                    MDScreen:
+                        id: settings_screen
+                        name: "Account settings"
+
+                        MDCard:
+                            size_hint: None, None
+                            size: 300, 450
+                            pos_hint: {"center_x": 0.5, "center_y":0.5}
+                            padding: 25
+                            spacing: 15
+                            orientation: 'vertical'
+
+                            MDLabel:
+                                text: "Account settings"
+                                halign: "center"
+                                font_style: "H4"
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                                padding_y: 15
+
+                            MDTextField:
+                                pos_hint: {"center_x": .5}
+                                size_hint_x: None
+                                width: 200
+                                id: old_password
+                                hint_text: "Enter old password "
+                                password: True
+                                write_tab: False
+
+                            MDTextField:
+                                pos_hint: {"center_x": .5}
+                                size_hint_x: None
+                                width: 200
+                                id: new_password
+                                hint_text: "Enter new password "
+                                helper_text: "" if new_password.text=='' else "Password has to be at least 6 characters long" if len(new_password.text)<6 else ""
+                                helper_text_mode: "on_focus" if new_password.text=='' else "on_error" if len(new_password.text)<6 else "on_focus"
+                                error : False if new_password.text=='' else True if len(new_password.text)<6 else False
+                                password: True
+                                write_tab: False
+
+                            MDTextField:
+                                pos_hint: {"center_x": .5}
+                                size_hint_x: None
+                                width: 200
+                                id: confirm_new_password
+                                hint_text: "Re-enter new password "
+                                helper_text: "" if confirm_new_password.text=='' else "Passwords do not match" if confirm_new_password.text!=new_password.text else ""
+                                helper_text_mode: "on_focus" if confirm_new_password.text=='' else "on_error" if confirm_new_password.text != new_password.text else "on_focus"
+                                error: False if confirm_new_password.text=='' else True if confirm_new_password.text!=new_password.text else False
+                                password: True
+                                write_tab: False
+
+                            MDBoxLayout:
+                                orientation: 'horizontal'
+                                MDLabel:
+                                    text: "Mute sound effects?"
+                                MDSwitch:
+                                    pos_hint: {'center_x': .5, 'center_y': .5}
+
+
+                            MDRaisedButton:
+                                id: update_button
+                                text: "UPDATE"
+                                pos_hint: {"center_x": 0.5}
+
+                    MDScreen:
+                        id: stats_screen
+                        name: "Stats"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "Stats"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+                    MDScreen:
+                        id: about_screen
+                        name: "About"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "About"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+                    MDScreen:
+                        id: start_test_screen
+                        name: "Start test"
+
+                        StackLayout:
+                            orientation: "lr-tb"
+                            MDRaisedButton:
+                                id: difficulty_button
+                                text: "Difficulty"
+                                size_hint: 1/3, 0.1
+                                on_release: app.difficulty_menu.open()
+
+                            MDRaisedButton:
+                                id: type_button
+                                text: "Type"
+                                size_hint: 1/3, 0.1
+                                on_release: app.type_menu.open()
+
+                            MDRaisedButton:
+                                id: duration_button
+                                text: "Duration"
+                                size_hint: 1/3, 0.1
+                                on_release: app.duration_menu.open()
+
+                        MDFloatLayout:
+
+                            MDRaisedButton:
+                                pos_hint: {"center_x": .5, "center_y": .4}
+                                text: "Start test"
+                                on_release:
+                                    app_screen_manager.current = "Test"
+                                    app_screen_manager.transition.direction = "right"
+                            MDLabel:
+                                id: test_label
+                                halign: "center"
+                                text: ""
+
+                    MDScreen:
+                        id: test_screen
+                        name: "Test"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "Test"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+                    MDScreen:
+                        id: test_history_screen
+                        name: "Test history"
+
+                        MDBoxLayout:
+                            orientation: "vertical"
+
+                            MDBoxLayout:
+                                MDLabel:
+                                    text: "Test history"
+                                    halign: "center"
+                                    font_style: "H4"
+                                    size_hint_y: None
+
+
+                MDNavigationDrawer:
+                    id: nav_drawer
+
+                    MDNavigationDrawerMenu:
+
+                        MDNavigationDrawerHeader:
+                            title: "Arithmo"
+                            text: "Nick Petrov"
+
+        #               https://pictogrammers.com/library/mdi/
+                        MDNavigationDrawerItem:
+                            icon: "home"
+                            text: "Home"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "account-cog"
+                            text: "Account settings"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "chart-line"
+                            text: "Stats"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "information-variant"
+                            text: "About"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "draw"
+                            text: "Start test"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "history"
+                            text: "Test history"
+                            on_release: app.on_menu_click(self.text)
