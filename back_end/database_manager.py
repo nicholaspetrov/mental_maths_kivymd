@@ -26,6 +26,7 @@ class DatabaseManager:
     def create_tables(self):
         logger.info('Creating database tables...')
         conn = self.get_db_connection()
+        conn.execute("PRAGMA foreign_keys = 1")
         c = conn.cursor()
         c.execute('''
             CREATE TABLE IF NOT EXISTS users
@@ -46,19 +47,22 @@ class DatabaseManager:
                     [duration] INTEGER NOT NULL,
                     [test_type] TEXT NOT NULL,
                     [num_q] INTEGER NOT NULL,
-                    [num_correct_a] INTEGER NOT NULL
+                    [num_correct_a] INTEGER NOT NULL,
+                    [timestamp] TEXT NOT NULL,
+                    [user_id] INTEGER,
+                    FOREIGN KEY (user_id) REFERENCES users(user_id)
                     )
                     ''')
 
-        c.execute('''
-                    CREATE TABLE IF NOT EXISTS test_history
-                    (
-                    test_history_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    timestamp TEXT NOT NULL,
-                    user_id INTEGER NOT NULL,
-                    test_id INTEGER NOT NULL
-                    )
-                    ''')
+        # c.execute('''
+        #             CREATE TABLE IF NOT EXISTS test_history
+        #             (
+        #             test_history_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        #             timestamp TEXT NOT NULL,
+        #             user_id INTEGER NOT NULL,
+        #             test_id INTEGER NOT NULL
+        #             )
+        #             ''')
         conn.commit()
         self.close_db_conn(conn)
         logger.info('Database tables created successfully')
@@ -136,7 +140,7 @@ class DatabaseManager:
                 (
                     test.difficulty,
                     test.duration,
-                    test.test_type,
+                    test.question_operator,
                     test.number_q,
                     test.number_correct_a
                 )

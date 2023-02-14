@@ -3,6 +3,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
+from kivy.properties import StringProperty
 
 # from back_end.database_manager import create_password_table
 # from back_end.database_manager import insert_into_password_table
@@ -114,7 +115,8 @@ class AppLayout(MDBoxLayout):
             self.clear_register_fields()
 
 
-class NavDrawer(MDApp):
+class MainApp(MDApp):
+    state = StringProperty("stop")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -179,9 +181,6 @@ class NavDrawer(MDApp):
         self.type_menu.dismiss()
         self.difficulty_menu.dismiss()
 
-    def start_test(self):
-        pass
-
     def build(self):
         return self.screen
 
@@ -192,6 +191,16 @@ class NavDrawer(MDApp):
     def open_menu(self):
         # For side menu
         self.root.ids.nav_drawer.set_state("open")
+
+    def start_test(self):
+        toast('Button clicked')
+        self.root.ids.progress_bar.start()
+
+    # def on_state(self, instance, value):
+        # {
+        #     "start": self.root.ids.app_screen_manager.current_screen.ids.progress_bar.start,
+        #     "stop": self.root.ids.app_screen_manager.current_screen.ids.progress_bar.stop,
+        # }.get(value)()
 
     def on_menu_click(self, item_name):
         # When item in menu clicked, menu closes
@@ -204,7 +213,7 @@ class NavDrawer(MDApp):
         self.root.ids.login_screen_manager.transition.direction = "right"
 
 
-NavDrawer().run()
+MainApp().run()
 
 '''
 TODO:

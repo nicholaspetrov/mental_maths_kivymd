@@ -15,6 +15,7 @@ dependencies:
   - anaconda-navigator
   - navigator-updater
   - kivy
+  - faker
   - pip:
       - kivymd==1.0.2
       - pyrebase
