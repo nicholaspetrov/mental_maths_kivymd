@@ -120,7 +120,13 @@ class MainApp(MDApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screen = Builder.load_file('main_app.kv')
+        Builder.load_file('pages/home.kv')
+        Builder.load_file('pages/account.kv')
+        Builder.load_file('pages/stats.kv')
+        Builder.load_file('pages/about.kv')
+        Builder.load_file('pages/test.kv')
+        Builder.load_file('pages/history.kv')
+        self.screen = Builder.load_file('pages/main_app.kv')
 
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
         difficulty_items = [
@@ -194,7 +200,7 @@ class MainApp(MDApp):
 
     def start_test(self):
         toast('Button clicked')
-        self.root.ids.progress_bar.start()
+        # self.root.ids.progress_bar.start()
 
     # def on_state(self, instance, value):
         # {
@@ -220,5 +226,5 @@ TODO:
 - Change TopAppBar title with username or page name when logged in
 - "Save db file into backend python package"
 - Enable update button once something has been changed in settings page
-- Position update button to middle
+- Change stacklayout for test creation page so that it doesn't cover topappbar
 '''

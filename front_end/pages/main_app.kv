@@ -162,125 +162,19 @@ AppLayout:
                 MDScreenManager:
                     id: app_screen_manager
 
-                    MDScreen:
-                        id: home_screen
-                        name: "Home"
-
-                        MDBoxLayout:
-                            orientation: "vertical"
-
-                            MDLabel:
-                                text: "Home1"
-                                halign: "center"
-                                font_style: "H4"
-                                size_hint_y: None
-
-                            MDLabel:
-                                text: "Home2"
-                                halign: "center"
-                                font_style: "H4"
-                                size_hint_y: None
-
-                    MDScreen:
-                        id: settings_screen
-                        name: "Account settings"
-
-                        MDCard:
-                            size_hint: None, None
-                            size: 300, 450
-                            pos_hint: {"center_x": 0.5, "center_y":0.5}
-                            padding: 25
-                            spacing: 15
-                            orientation: 'vertical'
-
-                            MDLabel:
-                                text: "Account settings"
-                                halign: "center"
-                                font_style: "H4"
-                                size_hint_y: None
-                                height: self.texture_size[1]
-                                padding_y: 15
-
-                            MDTextField:
-                                pos_hint: {"center_x": .5}
-                                size_hint_x: None
-                                width: 200
-                                id: old_password
-                                hint_text: "Enter old password "
-                                password: True
-                                write_tab: False
-
-                            MDTextField:
-                                pos_hint: {"center_x": .5}
-                                size_hint_x: None
-                                width: 200
-                                id: new_password
-                                hint_text: "Enter new password "
-                                helper_text: "" if new_password.text=='' else "Password has to be at least 6 characters long" if len(new_password.text)<6 else ""
-                                helper_text_mode: "on_focus" if new_password.text=='' else "on_error" if len(new_password.text)<6 else "on_focus"
-                                error : False if new_password.text=='' else True if len(new_password.text)<6 else False
-                                password: True
-                                write_tab: False
-
-                            MDTextField:
-                                pos_hint: {"center_x": .5}
-                                size_hint_x: None
-                                width: 200
-                                id: confirm_new_password
-                                hint_text: "Re-enter new password "
-                                helper_text: "" if confirm_new_password.text=='' else "Passwords do not match" if confirm_new_password.text!=new_password.text else ""
-                                helper_text_mode: "on_focus" if confirm_new_password.text=='' else "on_error" if confirm_new_password.text != new_password.text else "on_focus"
-                                error: False if confirm_new_password.text=='' else True if confirm_new_password.text!=new_password.text else False
-                                password: True
-                                write_tab: False
-
-                            MDBoxLayout:
-                                orientation: 'horizontal'
-                                MDLabel:
-                                    text: "Mute sound effects?"
-                                MDSwitch:
-                                    pos_hint: {'center_x': .5, 'center_y': .5}
-
-
-                            MDRaisedButton:
-                                id: update_button
-                                text: "UPDATE"
-                                pos_hint: {"center_x": 0.5}
-
-                    MDScreen:
-                        id: stats_screen
-                        name: "Stats"
-
-                        MDBoxLayout:
-                            orientation: "vertical"
-
-                            MDBoxLayout:
-                                MDLabel:
-                                    text: "Stats"
-                                    halign: "center"
-                                    font_style: "H4"
-                                    size_hint_y: None
-
-                    MDScreen:
-                        id: about_screen
-                        name: "About"
-
-                        MDBoxLayout:
-                            orientation: "vertical"
-
-                            MDBoxLayout:
-                                MDLabel:
-                                    text: "About"
-                                    halign: "center"
-                                    font_style: "H4"
-                                    size_hint_y: None
+                    Home:
+                    Account:
+                    Stats:
+                    About:
+                    Test:
+                    History:
 
                     MDScreen:
                         id: start_test_screen
                         name: "Start test"
 
                         StackLayout:
-                            orientation: "lr-tb"
+                            orientation: "lr-bt"
                             MDRaisedButton:
                                 id: difficulty_button
                                 text: "Difficulty"
@@ -312,49 +206,6 @@ AppLayout:
                                 halign: "center"
                                 text: ""
 
-                    MDScreen:
-                        id: test_screen
-                        name: "Test"
-
-                        MDBoxLayout:
-                            orientation: "vertical"
-
-                            MDBoxLayout:
-                                orientation: "vertical"
-
-                                MDLabel:
-                                    text: "Test"
-                                    halign: "center"
-                                    font_style: "H4"
-                                    size_hint_y: None
-
-                                MDProgressBar:
-                                    id: progress_bar
-                                    running_duration: 5
-                                    catching_duration: 10.5
-                                    type: "determinate"
-
-                                MDRaisedButton:
-                                    pos_hint: {"center_x": .5, "center_y": .4}
-                                    text: "Start test"
-#                                    on_release: app.state = "stop" if app.state == "start" else "start"
-                                    on_release: app.start_test()
-
-                    MDScreen:
-                        id: test_history_screen
-                        name: "Test history"
-
-                        MDBoxLayout:
-                            orientation: "vertical"
-
-                            MDBoxLayout:
-                                MDLabel:
-                                    text: "Test history"
-                                    halign: "center"
-                                    font_style: "H4"
-                                    size_hint_y: None
-
-
                 MDNavigationDrawer:
                     id: nav_drawer
 
@@ -372,7 +223,7 @@ AppLayout:
 
                         MDNavigationDrawerItem:
                             icon: "account-cog"
-                            text: "Account settings"
+                            text: "Account"
                             on_release: app.on_menu_click(self.text)
 
                         MDNavigationDrawerItem:
@@ -392,5 +243,5 @@ AppLayout:
 
                         MDNavigationDrawerItem:
                             icon: "history"
-                            text: "Test history"
+                            text: "History"
                             on_release: app.on_menu_click(self.text)

@@ -93,7 +93,7 @@ class Test:
 #             test.get_next_question()
 
 if __name__ == '__main__':
-    test = Test('2', 'Easy', 120, '/')
+    test = Test('2', 'Hard', 120, '/')
     for i in range(4):
         result = int(input(f'{test.get_next_question()}: '))
         test.check_answer(result)
