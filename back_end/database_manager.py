@@ -1,10 +1,12 @@
 import sqlite3
+from loguru import logger
+
 from back_end.hashing import login
-from back_end.test import Test
+from back_end.usertest import UserTest
 from back_end.user import User
 from back_end.test_history import TestHistory
 from back_end.hashing import password_to_denary
-from loguru import logger
+from back_end.utils import get_string_for_datetime
 
 
 class DatabaseManager:
@@ -46,9 +48,8 @@ class DatabaseManager:
                     [difficulty] TEXT NOT NULL,
                     [duration] INTEGER NOT NULL,
                     [test_type] TEXT NOT NULL,
-                    [num_q] INTEGER NOT NULL,
-                    [num_correct_a] INTEGER NOT NULL,
-                    [timestamp] TEXT NOT NULL,
+                    [score] INTEGER NOT NULL,
+                    [time_created] TEXT NOT NULL,
                     [user_id] INTEGER,
                     FOREIGN KEY (user_id) REFERENCES users(user_id)
                     )
@@ -88,9 +89,9 @@ class DatabaseManager:
         else:
             result = c.execute('INSERT INTO users(name, email, salt, hashed_pwd) VALUES(?, ?, ?, ?)', (name, email, salt, hashed_pwd))
             conn.commit()
-            self.close_db_conn(conn)
             logger.info(f'New user registered under {email}')
             user = User(name=name, email=email, user_id=result.lastrowid, password=None)
+            self.close_db_conn(conn)
             return user
 
     def check_login(self, email, password):
@@ -119,63 +120,64 @@ class DatabaseManager:
             sql = "SELECT * FROM users WHERE email = ?"
             c.execute(sql, (email,))
             record = c.fetchall()
-            self.close_db_conn(conn)
             if len(record) == 0:
                 return False
             return self.check_login(email, password)
         except Exception as e:
-            self.close_db_conn(conn)
             return False
+        finally:
+            self.close_db_conn(conn)
 
     def insert_test(self, test):
         try:
             conn = self.get_db_connection()
             c = conn.cursor()
+            test.time_created = get_string_for_datetime()
             sql = '''
-            INSERT INTO tests(difficulty, duration, test_type, num_q, num_correct_a) 
-            VALUES(?, ?, ?, ?, ?)
+            INSERT INTO tests(difficulty, duration, test_type, score, time_created, user_id) 
+            VALUES(?, ?, ?, ?, ?, ?)
             '''
-            c.execute(
+            result = c.execute(
                 sql,
                 (
                     test.difficulty,
                     test.duration,
                     test.question_operator,
-                    test.number_q,
-                    test.number_correct_a
+                    test.score,
+                    test.time_created,
+                    test.user_id
                 )
             )
             conn.commit()
-            self.close_db_conn(conn)
             logger.info('Test has successfully been inserted')
+            test.test_id = result.lastrowid
+            return test
         except Exception as e:
-            self.close_db_conn(conn)
             logger.error(e)
-
-
-    def insert_test_history(self, test_history):
-        try:
-            conn = self.get_db_connection()
-            c = conn.cursor()
-            sql = '''
-            INSERT INTO test_history(timestamp, user_id, test_id) 
-            VALUES(?, ?, ?)
-            '''
-            c.execute(
-                sql,
-                (
-                    test_history.timestamp,
-                    test_history.user_id,
-                    test_history.test_id
-                )
-            )
-            conn.commit()
+        finally:
             self.close_db_conn(conn)
-            logger.info('Test has successfully been inserted')
-        except Exception as e:
-            self.close_db_conn(conn)
-            logger.error(e)
 
 
 
-
+    # def insert_test_history(self, test_history):
+    #     try:
+    #         conn = self.get_db_connection()
+    #         c = conn.cursor()
+    #         sql = '''
+    #         INSERT INTO test_history(timestamp, user_id, test_id)
+    #         VALUES(?, ?, ?)
+    #         '''
+    #         c.execute(
+    #             sql,
+    #             (
+    #                 test_history.timestamp,
+    #                 test_history.user_id,
+    #                 test_history.test_id
+    #             )
+    #         )
+    #         conn.commit()
+    #         self.close_db_conn(conn)
+    #         logger.info('Test has successfully been inserted')
+    #     except Exception as e:
+    #         self.close_db_conn(conn)
+    #         logger.error(e)

@@ -1,3 +1,6 @@
+from loguru import logger
+from kivy.clock import Clock
+
 from kivy.lang import Builder
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.app import MDApp
@@ -13,6 +16,7 @@ from kivy.properties import StringProperty
 from back_end.database_manager import DatabaseManager
 
 from back_end.hashing import password_to_denary
+from back_end.usertest import UserTest
 
 
 class AppLayout(MDBoxLayout):
@@ -116,7 +120,10 @@ class AppLayout(MDBoxLayout):
 
 
 class MainApp(MDApp):
+    test_settings = {}
     state = StringProperty("stop")
+    user_test = None
+    active = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -124,7 +131,7 @@ class MainApp(MDApp):
         Builder.load_file('pages/account.kv')
         Builder.load_file('pages/stats.kv')
         Builder.load_file('pages/about.kv')
-        Builder.load_file('pages/test.kv')
+        Builder.load_file('pages/quiz.kv')
         Builder.load_file('pages/history.kv')
         self.screen = Builder.load_file('pages/main_app.kv')
 
@@ -133,7 +140,7 @@ class MainApp(MDApp):
             {
                 "text": i,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=i: self.menu_callback(x),
+                "on_release": lambda x=i: self.menu_callback('Difficulty', x),
             } for i in difficulties
         ]
         self.difficulty_menu = MDDropdownMenu(
@@ -149,7 +156,7 @@ class MainApp(MDApp):
             {
                 "text": i,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=i: self.menu_callback(x),
+                "on_release": lambda x=i: self.menu_callback('Operator', x),
             } for i in types
         ]
         self.type_menu = MDDropdownMenu(
@@ -160,12 +167,12 @@ class MainApp(MDApp):
             max_height=200
         )
 
-        durations = ['1:00', '2:00', '5:00', '10:00']
+        durations = ['1 min', '2 min', '5 min', '10 min']
         duration_items = [
             {
                 "text": i,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=i: self.menu_callback(x),
+                "on_release": lambda x=i: self.menu_callback('Duration', x),
             } for i in durations
         ]
         self.duration_menu = MDDropdownMenu(
@@ -176,11 +183,17 @@ class MainApp(MDApp):
             max_height=200
         )
 
-    test = []
+    def stop_user_test(self, dt):
+        logger.debug('Stopping the test')
+        self.active = False
+        self.root.ids.app_screen_manager.current = 'Start test'
 
-    def menu_callback(self, text_item):
-        self.test.append(text_item)
-        output = ', '.join(self.test)
+    def menu_callback(self, param_name, param_value):
+        if param_name == 'Duration':
+            param_value = int(param_value.split(' ')[0]) * 60
+
+        self.test_settings[param_name] = param_value
+        output = str(self.test_settings)
         self.screen.ids.test_label.text = output
 
         self.duration_menu.dismiss()
@@ -198,15 +211,44 @@ class MainApp(MDApp):
         # For side menu
         self.root.ids.nav_drawer.set_state("open")
 
-    def start_test(self):
-        toast('Button clicked')
-        # self.root.ids.progress_bar.start()
-
     # def on_state(self, instance, value):
         # {
         #     "start": self.root.ids.app_screen_manager.current_screen.ids.progress_bar.start,
         #     "stop": self.root.ids.app_screen_manager.current_screen.ids.progress_bar.stop,
         # }.get(value)()
+
+    # def create_next_question(self):
+    #     toast('Next question')
+
+    def get_next_question(self):
+        if len(self.user_test.questions) > 0:
+            answer = self.root.ids.app_screen_manager.screens[4].ids.answer_input.text
+            logger.debug(f'Storing answer: {answer}')
+            self.user_test.check_answer(int(answer) if len(answer) > 0 else 0)
+        else:
+            self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H3'
+            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
+            Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+
+        # if self.active:
+        self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
+        question = self.user_test.get_next_question()
+        logger.debug(f'Generating next question: {question}')
+        self.root.ids.app_screen_manager.screens[4].ids.question_label.text = str(question)
+        # else:
+        #     logger.debug('Redirecting to start test after test has finished')
+        #     self.root.ids.app_screen_manager.current = 'Start test'
+
+
+    def start_new_test(self):
+        logger.debug(f'Starting new test: {self.test_settings}')
+        self.user_test = UserTest(
+            user_id=1,
+            difficulty=self.test_settings['Difficulty'],
+            duration=self.test_settings['Duration'],
+            question_operator=self.test_settings['Operator']
+        )
 
     def on_menu_click(self, item_name):
         # When item in menu clicked, menu closes
@@ -227,4 +269,7 @@ TODO:
 - "Save db file into backend python package"
 - Enable update button once something has been changed in settings page
 - Change stacklayout for test creation page so that it doesn't cover topappbar
+- Change toolbar during test so exit button ("end test early button") redirects user to home rather than to login page
+- Dropdown listbox not menu
+- Animation for switching screens
 '''

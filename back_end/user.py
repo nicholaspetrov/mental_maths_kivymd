@@ -1,4 +1,4 @@
-from back_end.test import Test
+from back_end.usertest import UserTest
 
 
 class User:
@@ -10,7 +10,7 @@ class User:
         self.user_id = user_id
 
     def create_test(self, test_id, difficulty, duration, test_type):
-        test = Test(test_id, difficulty, duration, test_type)
+        test = UserTest(test_id, difficulty, duration, test_type)
 
     def start_test(self):
         pass
