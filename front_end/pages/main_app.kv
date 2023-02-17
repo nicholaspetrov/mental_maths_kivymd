@@ -181,6 +181,7 @@ AppLayout:
                     About:
                     Quiz:
                     History:
+                    Test_results:
 
                     MDScreen:
                         id: start_test_screen
@@ -212,8 +213,6 @@ AppLayout:
                                 pos_hint: {"center_x": .5, "center_y": .4}
                                 text: "Start test"
                                 on_release:
-                                    app_screen_manager.current = "Quiz"
-                                    app_screen_manager.transition.direction = "right"
                                     app.start_new_test()
                             MDLabel:
                                 id: test_label

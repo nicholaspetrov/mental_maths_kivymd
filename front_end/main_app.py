@@ -133,6 +133,7 @@ class MainApp(MDApp):
         Builder.load_file('pages/about.kv')
         Builder.load_file('pages/quiz.kv')
         Builder.load_file('pages/history.kv')
+        Builder.load_file('pages/test_results.kv')
         self.screen = Builder.load_file('pages/main_app.kv')
 
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
@@ -186,7 +187,10 @@ class MainApp(MDApp):
     def stop_user_test(self, dt):
         logger.debug('Stopping the test')
         self.active = False
-        self.root.ids.app_screen_manager.current = 'Start test'
+        self.root.ids.app_screen_manager.current = 'Test_results'
+        self.user_test.calculate_score()
+        result = self.user_test.score
+        self.root.ids.app_screen_manager.screens[6].ids.results_label.text = str(result)
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':
@@ -203,52 +207,46 @@ class MainApp(MDApp):
     def build(self):
         return self.screen
 
-    # def build(self):
-    #     # Loads kv file
-    #     return Builder.load_file("main_app.kv")
-
     def open_menu(self):
         # For side menu
         self.root.ids.nav_drawer.set_state("open")
 
-    # def on_state(self, instance, value):
-        # {
-        #     "start": self.root.ids.app_screen_manager.current_screen.ids.progress_bar.start,
-        #     "stop": self.root.ids.app_screen_manager.current_screen.ids.progress_bar.stop,
-        # }.get(value)()
-
-    # def create_next_question(self):
-    #     toast('Next question')
-
     def get_next_question(self):
+        self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = False
         if len(self.user_test.questions) > 0:
             answer = self.root.ids.app_screen_manager.screens[4].ids.answer_input.text
-            logger.debug(f'Storing answer: {answer}')
-            self.user_test.check_answer(int(answer) if len(answer) > 0 else 0)
+            if answer.lstrip("-").isdigit():
+                logger.debug(f'Storing answer: {answer}')
+                self.user_test.check_answer(int(answer) if len(answer) > 0 else 0)
+            else:
+                toast('Invalid answer')
+                self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
+                return
         else:
             self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H3'
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
             Clock.schedule_once(self.stop_user_test, self.user_test.duration)
 
-        # if self.active:
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
         question = self.user_test.get_next_question()
         logger.debug(f'Generating next question: {question}')
-        self.root.ids.app_screen_manager.screens[4].ids.question_label.text = str(question)
-        # else:
-        #     logger.debug('Redirecting to start test after test has finished')
-        #     self.root.ids.app_screen_manager.current = 'Start test'
-
+        self.root.ids.app_screen_manager.screens[4].ids.question_label.text = ' '.join(map(str, question))
 
     def start_new_test(self):
-        logger.debug(f'Starting new test: {self.test_settings}')
-        self.user_test = UserTest(
-            user_id=1,
-            difficulty=self.test_settings['Difficulty'],
-            duration=self.test_settings['Duration'],
-            question_operator=self.test_settings['Operator']
-        )
+        if len(self.test_settings) < 3:
+            toast('Please fill in all required fields')
+            return
+        else:
+            logger.debug(f'Starting new test: {self.test_settings}')
+            self.user_test = UserTest(
+                user_id=1,
+                difficulty=self.test_settings['Difficulty'],
+                duration=self.test_settings['Duration'],
+                question_operator=self.test_settings['Operator']
+            )
+            self.root.ids.app_screen_manager.current = "Quiz"
+            self.root.ids.app_screen_manager.transition.direction = "right"
 
     def on_menu_click(self, item_name):
         # When item in menu clicked, menu closes
