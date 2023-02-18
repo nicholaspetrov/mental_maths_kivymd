@@ -1,24 +1,37 @@
-MDScreen
-    StackLayout:
-        orientation: 'lr-tb'
+<MyAppTopAppBar@MDTopAppBar>:
+#   This is a reusable structure
+    title: "Username"
+#    elevation: 10
+    pos_hint: {"top": 1}
+    left_action_items: [["menu", lambda x: app.open_menu()]]
+    right_action_items: [["logout", lambda x: app.exit_app()]]
 
-        MDDropDownItem:
-            id: difficulty_button
-            pos_hint: {'center_x': .5, 'center_y': .5}
-            text: 'Difficulty'
-            on_release: app.difficulty_menu.open()
-            size_hint: 1/3, 0.1
+MDScreen:
 
-        MDDropDownItem:
-            id: operator_button
-            pos_hint: {'center_x': .5, 'center_y': .5}
-            text: 'Operator'
-            on_release: app.operator_menu.open()
-            size_hint: 1/3, 0.1
+    MyAppTopAppBar
 
-        MDDropDownItem:
-            id: duration_button
-            pos_hint: {'center_x': .5, 'center_y': .5}
-            text: 'Duration'
-            on_release: app.duration_menu.open()
-            size_hint: 1/3, 0.1
+    MDBoxLayout:
+        size_hint_y: 0.935
+        StackLayout:
+            orientation: 'lr-tb'
+
+            MDDropDownItem:
+                id: difficulty_button
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                text: 'Difficulty'
+                on_release: app.difficulty_menu.open()
+                size_hint: 1/3, 0.1
+
+            MDDropDownItem:
+                id: operator_button
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                text: 'Operator'
+                on_release: app.operator_menu.open()
+                size_hint: 1/3, 0.1
+
+            MDDropDownItem:
+                id: duration_button
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                text: 'Duration'
+                on_release: app.duration_menu.open()
+                size_hint: 1/3, 0.1

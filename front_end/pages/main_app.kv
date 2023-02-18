@@ -187,25 +187,27 @@ AppLayout:
                         id: start_test_screen
                         name: "Start test"
 
-                        StackLayout:
-                            orientation: "lr-tb"
-                            MDRaisedButton:
-                                id: difficulty_button
-                                text: "Difficulty"
-                                size_hint: 1/3, 0.1
-                                on_release: app.difficulty_menu.open()
+                        MDBoxLayout:
+                            size_hint_y: 0.935
+                            StackLayout:
+                                orientation: "lr-tb"
+                                MDDropDownItem:
+                                    id: difficulty_button
+                                    text: "Difficulty"
+                                    size_hint: 1/3, 0.1
+                                    on_release: app.difficulty_menu.open()
 
-                            MDRaisedButton:
-                                id: type_button
-                                text: "Type"
-                                size_hint: 1/3, 0.1
-                                on_release: app.type_menu.open()
+                                MDDropDownItem:
+                                    id: operator_button
+                                    text: "Operator"
+                                    size_hint: 1/3, 0.1
+                                    on_release: app.operator_menu.open()
 
-                            MDRaisedButton:
-                                id: duration_button
-                                text: "Duration"
-                                size_hint: 1/3, 0.1
-                                on_release: app.duration_menu.open()
+                                MDDropDownItem:
+                                    id: duration_button
+                                    text: "Duration"
+                                    size_hint: 1/3, 0.1
+                                    on_release: app.duration_menu.open()
 
                         MDFloatLayout:
 

@@ -139,10 +139,10 @@ class MainApp(MDApp):
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
         difficulty_items = [
             {
-                "text": i,
+                "text": difficulty,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=i: self.menu_callback('Difficulty', x),
-            } for i in difficulties
+                "on_release": lambda x=f'Difficulty: {difficulty}': self.menu_callback('Difficulty', x.split(' ')[1]),
+            } for difficulty in difficulties
         ]
         self.difficulty_menu = MDDropdownMenu(
             caller=self.screen.ids.difficulty_button,
@@ -152,17 +152,17 @@ class MainApp(MDApp):
             max_height=200
         )
 
-        types = ['+', '-', '/', '*']
-        type_items = [
+        operators = ['+', '-', '/', '*']
+        operator_items = [
             {
-                "text": i,
+                "text": operator,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=i: self.menu_callback('Operator', x),
-            } for i in types
+                "on_release": lambda x=f'Operator: {operator}': self.menu_callback('Operator', x.split(' ')[1]),
+            } for operator in operators
         ]
-        self.type_menu = MDDropdownMenu(
-            caller=self.screen.ids.type_button,
-            items=type_items,
+        self.operator_menu = MDDropdownMenu(
+            caller=self.screen.ids.operator_button,
+            items=operator_items,
             position="bottom",
             width_mult=2.5,
             max_height=200
@@ -171,10 +171,10 @@ class MainApp(MDApp):
         durations = ['1 min', '2 min', '5 min', '10 min']
         duration_items = [
             {
-                "text": i,
+                "text": duration,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=i: self.menu_callback('Duration', x),
-            } for i in durations
+                "on_release": lambda x=f'Duration: {duration}': self.menu_callback('Duration', x),
+            } for duration in durations
         ]
         self.duration_menu = MDDropdownMenu(
             caller=self.screen.ids.duration_button,
@@ -194,15 +194,19 @@ class MainApp(MDApp):
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':
-            param_value = int(param_value.split(' ')[0]) * 60
+            self.test_settings[param_name] = int(param_value.split(' ')[1])*60
+            self.screen.ids.duration_button.set_item(param_value)
+            self.duration_menu.dismiss()
+        else:
+            self.test_settings[param_name] = param_value
+            if param_name == 'Difficulty':
+                self.screen.ids.difficulty_button.set_item(f'Difficulty: {param_value}')
+                self.difficulty_menu.dismiss()
+            if param_name == 'Operator':
+                self.screen.ids.operator_button.set_item(f'Operator: {param_value}')
+                self.operator_menu.dismiss()
 
-        self.test_settings[param_name] = param_value
-        output = str(self.test_settings)
-        self.screen.ids.test_label.text = output
-
-        self.duration_menu.dismiss()
-        self.type_menu.dismiss()
-        self.difficulty_menu.dismiss()
+        print(self.test_settings)
 
     def build(self):
         return self.screen
@@ -266,8 +270,7 @@ TODO:
 - Change TopAppBar title with username or page name when logged in
 - "Save db file into backend python package"
 - Enable update button once something has been changed in settings page
-- Change stacklayout for test creation page so that it doesn't cover topappbar
 - Change toolbar during test so exit button ("end test early button") redirects user to home rather than to login page
-- Dropdown listbox not menu
 - Animation for switching screens
+- Login button to direct user to home page not 'Application'
 '''
