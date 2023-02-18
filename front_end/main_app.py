@@ -238,6 +238,10 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[4].ids.question_label.text = ' '.join(map(str, question))
 
     def start_new_test(self):
+        self.screen.ids.difficulty_button.set_item('Difficulty')
+        self.screen.ids.operator_button.set_item('Operator')
+        self.screen.ids.duration_button.set_item('Duration')
+
         if len(self.test_settings) < 3:
             toast('Please fill in all required fields')
             return
