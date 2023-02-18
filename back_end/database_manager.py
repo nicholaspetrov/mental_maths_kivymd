@@ -100,33 +100,43 @@ class DatabaseManager:
         c = conn.cursor()
         sql = "SELECT * FROM users WHERE email = ?"
         c.execute(sql, (email,))
-        record = c.fetchall()
-        salt = record[0][3]
-        hashed_pwd = record[0][4]
+        records = c.fetchall()
+        # if len(records) == 0:
+        #     self.close_db_conn(conn)
+        #     return None
+        # else:
+        salt = records[0][3]
+        hashed_pwd = records[0][4]
         if hashed_pwd == login(password, salt):
             logger.info(f'Successful log in for email: {email}')
-            # user = User()
+            record = records[0]
+            user = User(
+                user_id=record[0],
+                name=record[1],
+                email=record[2]
+            )
             self.close_db_conn(conn)
-            return True
+            return user
         else:
             logger.info(f'Failed to log in for email: {email}')
             self.close_db_conn(conn)
-            return False
+            return None
 
     def check_user_exists(self, email, password):
-        try:
-            conn = self.get_db_connection()
-            c = conn.cursor()
-            sql = "SELECT * FROM users WHERE email = ?"
-            c.execute(sql, (email,))
-            record = c.fetchall()
-            if len(record) == 0:
-                return False
-            return self.check_login(email, password)
-        except Exception as e:
-            return False
-        finally:
-            self.close_db_conn(conn)
+        pass
+        # try:
+        #     conn = self.get_db_connection()
+        #     c = conn.cursor()
+        #     sql = "SELECT * FROM users WHERE email = ?"
+        #     c.execute(sql, (email,))
+        #     record = c.fetchall()
+        #     if len(record) == 0:
+        #         return False
+        #     return self.check_login(email, password)
+        # except Exception as e:
+        #     return False
+        # finally:
+        #     self.close_db_conn(conn)
 
     def insert_test(self, test):
         try:

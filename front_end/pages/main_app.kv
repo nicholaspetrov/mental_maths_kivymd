@@ -1,6 +1,7 @@
 <MyAppTopAppBar@MDTopAppBar>:
 #   This is a reusable structure
-    title: "Username"
+    id: app_bar
+    title: app.user_name
 #    elevation: 10
     pos_hint: {"top": 1}
     left_action_items: [["menu", lambda x: app.open_menu()]]
@@ -49,7 +50,7 @@ AppLayout:
                     helper_text_mode: "on_focus"
                     write_tab: False
                     multiline: False
-                    on_text_validate: root.check_data_login()
+                    on_text_validate: app.login()
                 MDTextField:
                     id: password
                     hint_text: "Password "
@@ -60,13 +61,13 @@ AppLayout:
                     password: True
                     write_tab: False
                     multiline: False
-                    on_text_validate: root.check_data_login()
+                    on_text_validate: app.login()
 
                 MDRaisedButton:
                     id: login_button
                     text: "LOGIN"
                     pos_hint: {"center_x": 0.5}
-                    on_release: root.check_data_login()
+                    on_release: app.login()
 
                 MDTextButton:
                     id: reg_button
@@ -76,7 +77,7 @@ AppLayout:
                     on_release:
                         login_screen_manager.current = "Registration"
                         login_screen_manager.transition.direction = "left"
-                        root.clear_login_fields()
+                        app.clear_login_fields()
 
         MDScreen:
             id: reg_screen
@@ -108,7 +109,7 @@ AppLayout:
                     write_tab: False
                     width: 200
                     multiline: False
-                    on_text_validate: root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
+                    on_text_validate: root.register(reg_name, reg_email, reg_password, reg_confirm_password)
                 MDTextField:
                     id: reg_email
                     hint_text: "Email "
@@ -118,7 +119,7 @@ AppLayout:
                     write_tab: False
                     width: 200
                     multiline: False
-                    on_text_validate: root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
+                    on_text_validate: app.register(reg_name, reg_email, reg_password, reg_confirm_password)
                 MDTextField:
                     id: reg_password
                     hint_text: "Password "
@@ -131,7 +132,7 @@ AppLayout:
                     write_tab: False
                     width: 200
                     multiline: False
-                    on_text_validate: root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
+                    on_text_validate: app.register(reg_name, reg_email, reg_password, reg_confirm_password)
                 MDTextField:
                     id: reg_confirm_password
                     hint_text: "Confirm password "
@@ -145,14 +146,14 @@ AppLayout:
                     error : False if reg_confirm_password.text=='' else True if reg_confirm_password.text!=reg_password.text else False
                     width: 200
                     multiline: False
-                    on_text_validate: root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
+                    on_text_validate: app.register(reg_name, reg_email, reg_password, reg_confirm_password)
 
                 MDRaisedButton:
                     id: reg_button
                     text: "Register"
                     pos_hint: {"center_x": 0.5}
                     on_release:
-                        root.validate_reg(reg_name, reg_email, reg_password, reg_confirm_password)
+                        app.register(reg_name, reg_email, reg_password, reg_confirm_password)
 
                 MDTextButton:
                     id: login_button
@@ -162,7 +163,7 @@ AppLayout:
                     on_release:
                         login_screen_manager.current = "Login"
                         login_screen_manager.transition.direction = "right"
-                        root.clear_register_fields()
+                        app.clear_register_fields()
 
         MDScreen:
             id: app_screen
