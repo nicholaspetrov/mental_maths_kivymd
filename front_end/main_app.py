@@ -119,7 +119,7 @@ class MainApp(MDApp):
     test_settings = {}
     user_test = None
     active = True
-    user = ObjectProperty()
+    user = None
     user_name = StringProperty()
 
     def __init__(self, **kwargs):
@@ -184,10 +184,23 @@ class MainApp(MDApp):
             max_height=200
         )
 
+    def new_test(self, retry_bool):
+        if not retry_bool:
+            self.root.ids.app_screen_manager.current = "Start test"
+            self.test_settings = {}
+            self.screen.ids.difficulty_button.set_item('Difficulty')
+            self.screen.ids.operator_button.set_item('Operator')
+            self.screen.ids.duration_button.set_item('Duration')
+        else:
+            self.root.ids.app_screen_manager.current = "Start test"
+            self.screen.ids.difficulty_button.set_item(f'Difficulty: {self.test_settings["Difficulty"]}')
+            self.screen.ids.operator_button.set_item(f'Operator: {self.test_settings["Operator"]}')
+            time = '{:g}'.format(int(self.test_settings["Duration"]) / 60)
+            self.screen.ids.duration_button.set_item(f'{time} min')
+
     def stop_user_test(self, dt):
         total_points = 0
         correct_answers = 0
-        # self.test_settings = {}
         logger.debug('Stopping the test')
         self.active = False
         self.root.ids.app_screen_manager.current = 'Test_results'
@@ -205,10 +218,6 @@ class MainApp(MDApp):
 
         questions_answered = len(self.user_test.user_results)
 
-        # result = self.user_test.score
-        # output = f'{result}/{self.total}'
-        # self.root.ids.app_screen_manager.screens[6].ids.results_label.text = output
-
         time = '{:g}'.format(int(self.test_settings["Duration"])/60)
         number_of_seconds = int(self.test_settings['Duration'])
         # https://stackoverflow.com/questions/13097099/how-to-make-python-print-1-as-opposed-to-1-0
@@ -222,8 +231,12 @@ class MainApp(MDApp):
         else:
             self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_points)}'
 
-        self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
-        self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(round(number_of_seconds/questions_answered, 2))} seconds per question'
+        if questions_answered == 0:
+            self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
+            self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = '0'
+        else:
+            self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
+            self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(round(number_of_seconds/questions_answered, 2))} seconds per question'
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':
@@ -248,6 +261,9 @@ class MainApp(MDApp):
         # For side menu
         self.root.ids.nav_drawer.set_state("open")
 
+    def refocus_ti(self, *args):
+        self.root.ids.app_screen_manager.screens[4].ids.answer_input.focus = True
+
     def get_next_question(self):
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = False
         if len(self.user_test.questions) > 0:
@@ -265,8 +281,21 @@ class MainApp(MDApp):
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
             Clock.schedule_once(self.stop_user_test, self.user_test.duration)
 
+        current_correct = self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value
+        current_incorrect = self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value
+        if len(self.user_test.questions) > 0:
+            if self.user_test.user_results[-1][1] > 0:
+                current_correct += self.user_test.user_results[-1][1]
+                self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = current_correct
+            else:
+                current_incorrect += -(self.user_test.user_results[-1][1])
+                self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
+        else:
+            pass
+
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
         question = self.user_test.get_next_question()
+        Clock.schedule_once(self.refocus_ti)
         logger.debug(f'Generating next question: {question}')
         self.root.ids.app_screen_manager.screens[4].ids.question_label.text = ' '.join(map(str, question))
 
@@ -296,6 +325,7 @@ class MainApp(MDApp):
 
     def exit_app(self):
         # User redirected to login when top-right exit button clicked
+        self.user = None
         self.root.ids.login_screen_manager.current = "Login"
         self.root.ids.login_screen_manager.transition.direction = "right"
 
@@ -329,10 +359,11 @@ class MainApp(MDApp):
             # No toast since message (passwords length less than 6) is already displayed under textfield dynamically
             return
 
-        self.user = self.dbm.insert_user(name.text, email.text, password.text)
+        user = self.dbm.insert_user(name.text, email.text, password.text)
         # Password fed into hashing algorithm
-        if self.user is not None:
+        if user is not None:
             # User has successfully logged in
+            self.user = user
             self.root.ids.login_screen_manager.current = "Application"
             self.root.ids.app_screen_manager.transition.direction = "left"
             self.user_name = self.user.name
@@ -379,6 +410,7 @@ class MainApp(MDApp):
             if self.user is not None:
                 # If hash of inputted password and hash of password in table equal
                 self.root.ids.login_screen_manager.current = "Application"
+                self.root.ids.app_screen_manager.current = "Home"
                 self.root.ids.app_screen_manager.transition.direction = "right"
                 self.user_name = self.user.name
                 self.clear_login_fields()

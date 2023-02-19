@@ -7,105 +7,118 @@
     right_action_items: [["logout", lambda x: app.exit_app()]]
 
 MDScreen:
+
+    id: test_screen
+    name: "Quiz"
+
     MyAppTopAppBar
 
-    MDBoxLayout:
-        size_hint_y: 0.885
-        padding: [10, 10, 10, 10]
-#        size_hint_x: 0.9
-        orientation: 'vertical'
-        columns: 3
-        spacing: 20
-        MDCard:
-            orientation: 'vertical'
-            MDLabel:
-                text: 'Test settings'
-                font_style: 'H6'
-                padding_x: 25
-            MDGridLayout:
-                size_hint_y: None
-                cols: 2
-                MDLabel:
-                    padding_x: 50
-                    text: 'Difficulty: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    padding_x: 50
-                    text: 'Hard'
-                    font_style: "Subtitle1"
+    MDGridLayout:
+        size_hint_y: 0.8925
+        rows: 2
+#        size_hint_y: None
+#        height: self.minimum_height
+        MDProgressBar:
+            text: 'Progress bar'
+            size_hint_y: .05
+            size_hint_x: .65
+            value: 50
+        MDGridLayout:
+            height: self.minimum_height
+            cols: 3
+
+            MDProgressBar:
+                value: 100
+                color: 255, 0, 0, 1
+                orientation: 'vertical'
+                size_hint_y: .1
+                size_hint_x: .1
+
+            MDFloatLayout:
 
                 MDLabel:
-                    padding_x: 50
-                    text: 'Operator: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    padding_x: 50
-                    text: '/'
-                    font_style: "Subtitle1"
+                    id: question_label
+                    pos_hint: {"center_x": .5, "center_y": .65}
+                    halign: 'center'
+                    text: "Click button to start"
+                    font_style: "H4"
+                    theme_text_color: "Custom"
+                    text_color: "blue"
 
-                MDLabel:
-                    padding_x: 50
-                    text: 'Duration: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    padding_x: 50
-                    text: '5 min'
-                    font_style: "Subtitle1"
+                MDTextField:
+                    id: answer_input
+                    hint_text: "Enter answer"
+                    mode: "rectangle"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    size_hint_x: None
+                    width: 200
+                    multiline: False
+                    on_text_validate: app.get_next_question()
+                    halign: "center"
+                    disabled: True
+                    focus: True
 
-        MDCard:
-            orientation: 'vertical'
-            MDLabel:
-                text: 'Score'
-                font_style: 'H6'
-                padding_x: 25
-            MDGridLayout:
-                size_hint_y: None
-                cols: 2
-                MDLabel:
-                    padding_x: 50
-                    text: 'Correct answers/Questions answered: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    padding_x: 50
-                    text: '25/35'
-                    font_style: "Subtitle1"
-
-                MDLabel:
-                    padding_x: 50
-                    text: 'Points scored: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    padding_x: 50
-                    text: '63'
-                    font_style: "Subtitle1"
-
-                MDLabel:
-                    padding_x: 50
-                    text: 'Total available points: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    padding_x: 50
-                    text: '100'
-                    font_style: "Subtitle1"
-
-        MDCard:
-            orientation: 'vertical'
-            MDLabel:
-                text: 'Graphs/Charts'
-                font_style: 'H6'
-                padding_x: 25
-            MDLabel:
-                text: 'Graphs to be added'
-                halign: 'center'
-            MDStackLayout:
-                orientation: 'rl-bt'
-                spacing: 10
-                padding: 10
                 MDRaisedButton:
-                    text: "New test"
-                    font_style: "Subtitle1"
-                    pos_hint: {"center_x": 0.7, "center_y": .15}
-                MDRaisedButton:
-                    text: "Retry test"
-                    font_style: "Subtitle1"
-                    pos_hint: {"center_x": 0.3, "center_y": .15}
+                    id: next_button
+                    pos_hint: {"center_x": .5, "center_y": .3}
+                    font_style: "H5"
+                    text: "Next question"
+                    on_release: app.get_next_question()
+
+            MDProgressBar:
+                color: 9, 141, 0, 1
+                value: 25
+                orientation: 'vertical'
+                size_hint_y: .1
+                size_hint_x: .1
+
+
+
+
+
+#    MDFloatLayout:
+#
+#        MDProgressBar:
+#            size_hint_x: .65
+#            value: 0
+#            pos_hint: {"center_x": .5, "center_y": .8}
+##            catching_duration: 10.5
+#            type: "determinate"
+#            orientation: 'vertical'
+#
+##        MDProgressBar:
+##            size_hint_x: .65
+##            value: 0
+##            pos_hint: {"center_x": .5, "center_y": .7}
+###            catching_duration: 10.5
+##            type: "determinate"
+#
+#
+#        MDLabel:
+#            id: question_label
+#            pos_hint: {"center_x": .5, "center_y": .65}
+#            halign: 'center'
+#            text: "Click button to start"
+#            font_style: "H4"
+#            theme_text_color: "Custom"
+#            text_color: "blue"
+#
+#        MDTextField:
+#            id: answer_input
+#            hint_text: "Enter answer"
+#            mode: "rectangle"
+#            pos_hint: {"center_x": .5, "center_y": .5}
+#            size_hint_x: None
+#            width: 200
+#            multiline: False
+#            on_text_validate: app.get_next_question()
+#            halign: "center"
+#            disabled: True
+#            focus: True
+#
+#        MDRaisedButton:
+#            id: next_button
+#            pos_hint: {"center_x": .5, "center_y": .3}
+#            font_style: "H5"
+#            text: "Next question"
+#            on_release: app.get_next_question()

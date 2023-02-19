@@ -70,57 +70,64 @@ class DatabaseManager:
 
     def insert_user(self, name, email, password):
         logger.info(f'Inserting new user: {email}')
+        try:
+            salt, hashed_pwd = password_to_denary(password)
 
-        salt, hashed_pwd = password_to_denary(password)
+            conn = self.get_db_connection()
+            c = conn.cursor()
+            # Check for existing user with same email
+            sql = "SELECT * FROM users WHERE email = ?"
+            c.execute(sql, (email,))
+            rows = c.fetchall()
+            emails = []
+            for row in rows:
+                emails.append(row[2])
 
-        conn = self.get_db_connection()
-        c = conn.cursor()
-        sql = "SELECT * FROM users WHERE email = ?"
-        c.execute(sql, (email,))
-        rows = c.fetchall()
-        emails = []
-        for row in rows:
-            emails.append(row[2])
-
-        if email in emails:
-            logger.info(f'{email} already registered')
+            if email in emails:
+                logger.info(f'{email} already registered')
+                return None
+            else:
+                result = c.execute('INSERT INTO users(name, email, salt, hashed_pwd) VALUES(?, ?, ?, ?)', (name, email, salt, hashed_pwd))
+                conn.commit()
+                logger.info(f'New user registered under {email}')
+                user = User(name=name, email=email, user_id=result.lastrowid, password=None)
+                return user
+        except Exception as e:
+            logger.error(e)
+        finally:
             self.close_db_conn(conn)
-            return None
-        else:
-            result = c.execute('INSERT INTO users(name, email, salt, hashed_pwd) VALUES(?, ?, ?, ?)', (name, email, salt, hashed_pwd))
-            conn.commit()
-            logger.info(f'New user registered under {email}')
-            user = User(name=name, email=email, user_id=result.lastrowid, password=None)
-            self.close_db_conn(conn)
-            return user
 
     def check_login(self, email, password):
         logger.info(f'Checking login for email: {email}')
-        conn = self.get_db_connection()
-        c = conn.cursor()
-        sql = "SELECT * FROM users WHERE email = ?"
-        c.execute(sql, (email,))
-        records = c.fetchall()
-        # if len(records) == 0:
-        #     self.close_db_conn(conn)
-        #     return None
-        # else:
-        salt = records[0][3]
-        hashed_pwd = records[0][4]
-        if hashed_pwd == login(password, salt):
-            logger.info(f'Successful log in for email: {email}')
-            record = records[0]
-            user = User(
-                user_id=record[0],
-                name=record[1],
-                email=record[2]
-            )
+        try:
+            conn = self.get_db_connection()
+            c = conn.cursor()
+            sql = "SELECT * FROM users WHERE email = ?"
+            c.execute(sql, (email,))
+            records = c.fetchall()
+            # if len(records) == 0:
+            #     self.close_db_conn(conn)
+            #     return None
+            # else:
+            salt = records[0][3]
+            hashed_pwd = records[0][4]
+            if hashed_pwd == login(password, salt):
+                logger.info(f'Successful log in for email: {email}')
+                record = records[0]
+                user = User(
+                    user_id=record[0],
+                    name=record[1],
+                    email=record[2]
+                )
+                return user
+            else:
+                logger.info(f'Failed to log in for email: {email}')
+                return None
+        except Exception as e:
+            logger.error(e)
+        finally:
             self.close_db_conn(conn)
-            return user
-        else:
-            logger.info(f'Failed to log in for email: {email}')
-            self.close_db_conn(conn)
-            return None
+
 
     def check_user_exists(self, email, password):
         pass

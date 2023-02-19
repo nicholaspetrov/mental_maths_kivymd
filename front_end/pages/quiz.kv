@@ -2,41 +2,110 @@
     id: test_screen
     name: "Quiz"
 
-    MDFloatLayout:
-
+    MDGridLayout:
+        size_hint_y: 0.8925
+        rows: 2
+        padding: 5, 5, 5, 5
+        spacing: 5
+#        size_hint_y: None
+#        height: self.minimum_height
         MDProgressBar:
             id: user_test_progress_bar
+            size_hint_y: .05
             size_hint_x: .65
-            value: 0
-            pos_hint: {"center_x": .5, "center_y": .8}
-#            catching_duration: 10.5
             type: "determinate"
+            value: 0
+        MDGridLayout:
+            height: self.minimum_height
+            cols: 3
 
+            MDProgressBar:
+                id: incorrect_progress_bar
+                color: 'red'
+                orientation: 'vertical'
+                size_hint_y: .1
+                size_hint_x: .1
+                value: 0
+                type: "indeterminate"
 
-        MDLabel:
-            id: question_label
-            pos_hint: {"center_x": .5, "center_y": .65}
-            halign: 'center'
-            text: "Click button to start"
-            font_style: "H4"
-            theme_text_color: "Custom"
-            text_color: "blue"
+            MDFloatLayout:
 
-        MDTextField:
-            id: answer_input
-            hint_text: "Enter answer"
-            mode: "rectangle"
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint_x: None
-            width: 200
-            multiline: False
-            on_text_validate: app.get_next_question()
-            halign: "center"
-            disabled: True
+                MDLabel:
+                    id: question_label
+                    pos_hint: {"center_x": .5, "center_y": .65}
+                    halign: 'center'
+                    text: "Click button to start"
+                    font_style: "H4"
+                    theme_text_color: "Custom"
+                    text_color: "blue"
 
-        MDRaisedButton:
-            id: next_button
-            pos_hint: {"center_x": .5, "center_y": .3}
-            font_style: "H5"
-            text: "Next question"
-            on_release: app.get_next_question()
+                MDTextField:
+                    id: answer_input
+                    hint_text: "Enter answer"
+                    mode: "rectangle"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    size_hint_x: None
+                    width: 200
+                    multiline: False
+                    on_text_validate: app.get_next_question()
+                    halign: "center"
+                    disabled: True
+                    focus: True
+
+                MDRaisedButton:
+                    id: next_button
+                    pos_hint: {"center_x": .5, "center_y": .3}
+                    font_style: "H5"
+                    text: "Next question"
+                    on_release: app.get_next_question()
+
+            MDProgressBar:
+                id: correct_progress_bar
+                color: 'green'
+                orientation: 'vertical'
+                size_hint_y: .1
+                size_hint_x: .1
+                value: 0
+                type: "indeterminate"
+#    id: test_screen
+#    name: "Quiz"
+#
+#    MDFloatLayout:
+#
+#        MDProgressBar:
+#            id: user_test_progress_bar
+#            size_hint_x: .65
+#            value: 0
+#            pos_hint: {"center_x": .5, "center_y": .8}
+##            catching_duration: 10.5
+#            type: "determinate"
+#
+#
+#        MDLabel:
+#            id: question_label
+#            pos_hint: {"center_x": .5, "center_y": .65}
+#            halign: 'center'
+#            text: "Click button to start"
+#            font_style: "H4"
+#            theme_text_color: "Custom"
+#            text_color: "blue"
+#
+#        MDTextField:
+#            id: answer_input
+#            hint_text: "Enter answer"
+#            mode: "rectangle"
+#            pos_hint: {"center_x": .5, "center_y": .5}
+#            size_hint_x: None
+#            width: 200
+#            multiline: False
+#            on_text_validate: app.get_next_question()
+#            halign: "center"
+#            disabled: True
+#            focus: True
+#
+#        MDRaisedButton:
+#            id: next_button
+#            pos_hint: {"center_x": .5, "center_y": .3}
+#            font_style: "H5"
+#            text: "Next question"
+#            on_release: app.get_next_question()

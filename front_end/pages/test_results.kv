@@ -8,7 +8,7 @@
 #        size_hint_x: 0.9
         orientation: 'vertical'
         columns: 3
-        spacing: 20
+        spacing: 10
         MDCard:
             orientation: 'vertical'
             MDLabel:
@@ -96,30 +96,18 @@
             MDLabel:
                 text: 'Graphs to be added'
                 halign: 'center'
-            MDStackLayout:
-                orientation: 'rl-bt'
-                spacing: 10
-                padding: 10
-                MDRaisedButton:
-                    text: "New test"
-                    font_style: "Subtitle1"
-                    pos_hint: {"center_x": 0.7, "center_y": .15}
-                MDRaisedButton:
-                    text: "Retry test"
-                    font_style: "Subtitle1"
-                    pos_hint: {"center_x": 0.3, "center_y": .15}
 
-#    MDFloatLayout:
-#
-#        MDLabel:
-#            pos_hint: {"center_x": .5, "center_y": .75}
-#            halign: 'center'
-#            text: "You scored:"
-#            font_style: "H3"
-#
-#        MDLabel:
-#            id: results_label
-#            pos_hint: {"center_x": .5, "center_y": .55}
-#            halign: 'center'
-#            text: ""
-#            font_style: "H4"
+        MDStackLayout:
+            orientation: 'rl-bt'
+            spacing: 10
+            padding: 10
+            MDRaisedButton:
+                text: "New test"
+                font_style: "Subtitle1"
+                pos_hint: {"center_x": 0.7, "center_y": .15}
+                on_release: app.new_test(False)
+            MDRaisedButton:
+                text: "Retry test"
+                font_style: "Subtitle1"
+                pos_hint: {"center_x": 0.3, "center_y": .15}
+                on_release: app.new_test(True)
