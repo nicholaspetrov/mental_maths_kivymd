@@ -288,10 +288,19 @@ class MainApp(MDApp):
                 current_correct += self.user_test.user_results[-1][1]
                 self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = current_correct
             else:
-                current_incorrect += -(self.user_test.user_results[-1][1])
-                self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
+                if self.user_test.user_results[-1][1] == 0:
+                    current_incorrect += 1
+                    self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
+                else:
+                    current_incorrect += -(self.user_test.user_results[-1][1])
+                    self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
         else:
             pass
+
+        if current_correct >= 100:
+            self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = 0
+        if current_incorrect >= 100:
+            self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = 0
 
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
         question = self.user_test.get_next_question()

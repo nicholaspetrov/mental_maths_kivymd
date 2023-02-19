@@ -10,29 +10,51 @@ MDScreen:
 
     id: test_screen
     name: "Quiz"
-
     MyAppTopAppBar
 
     MDGridLayout:
         size_hint_y: 0.8925
         rows: 2
+        padding: 5, 5, 5, 5
+        spacing: 5
 #        size_hint_y: None
 #        height: self.minimum_height
         MDProgressBar:
-            text: 'Progress bar'
+            id: user_test_progress_bar
             size_hint_y: .05
             size_hint_x: .65
-            value: 50
+            type: "determinate"
+            value: 0
         MDGridLayout:
             height: self.minimum_height
             cols: 3
 
-            MDProgressBar:
-                value: 100
-                color: 255, 0, 0, 1
-                orientation: 'vertical'
-                size_hint_y: .1
-                size_hint_x: .1
+            MDGridLayout:
+                cols: 3
+                MDProgressBar:
+                    id: incorrect_progress_bar
+                    color: 'red'
+                    orientation: 'vertical'
+                    size_hint_y: .1
+                    size_hint_x: .05
+                    value: 100
+                    type: "indeterminate"
+                MDProgressBar:
+                    id: incorrect_progress_bar
+                    color: 'red'
+                    orientation: 'vertical'
+                    size_hint_y: .1
+                    size_hint_x: .05
+                    value: 50
+                    type: "indeterminate"
+                MDProgressBar:
+                    id: incorrect_progress_bar
+                    color: 'red'
+                    orientation: 'vertical'
+                    size_hint_y: .1
+                    size_hint_x: .05
+                    value: 0
+                    type: "indeterminate"
 
             MDFloatLayout:
 
@@ -65,12 +87,33 @@ MDScreen:
                     text: "Next question"
                     on_release: app.get_next_question()
 
-            MDProgressBar:
-                color: 9, 141, 0, 1
-                value: 25
-                orientation: 'vertical'
-                size_hint_y: .1
-                size_hint_x: .1
+            MDGridLayout:
+                cols: 3
+
+                MDProgressBar:
+                    id: correct_progress_bar
+                    color: 'green'
+                    orientation: 'vertical'
+                    size_hint_y: .1
+                    size_hint_x: .05
+                    value: 0
+                    type: "indeterminate"
+                MDProgressBar:
+                    id: correct_progress_bar
+                    color: 'green'
+                    orientation: 'vertical'
+                    size_hint_y: .1
+                    size_hint_x: .05
+                    value: 25
+                    type: "indeterminate"
+                MDProgressBar:
+                    id: correct_progress_bar
+                    color: 'green'
+                    orientation: 'vertical'
+                    size_hint_y: .1
+                    size_hint_x: .05
+                    value: 100
+                    type: "indeterminate"
 
 
 
