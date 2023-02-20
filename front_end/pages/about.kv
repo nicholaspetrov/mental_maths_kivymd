@@ -2,12 +2,24 @@
     id: about_screen
     name: "About"
 
-    MDBoxLayout:
-        orientation: "vertical"
+    MDCard:
+        size_hint: None, None
+        size: 300, 450
+        pos_hint: {"center_x": 0.5, "center_y":0.5}
+        padding: 25
+        spacing: 10
+        orientation: 'vertical'
 
-        MDBoxLayout:
-            MDLabel:
-                text: "About"
-                halign: "center"
-                font_style: "H4"
-                size_hint_y: None
+        MDLabel:
+            text: "About1"
+            halign: "center"
+            font_style: "H4"
+            size_hint_y: None
+            height: self.texture_size[1]
+
+        MDLabel:
+            text: "About2"
+            halign: "center"
+            font_style: "H4"
+            size_hint_y: None
+            height: self.texture_size[1]

@@ -29,6 +29,11 @@ class UserTest:
         'Medium': 2,
         'Hard': 3
     }
+    scores_deducted = {
+        'Easy': 3,
+        'Medium': 2,
+        'Hard': 1
+    }
     score = 0
     test_id = 0
     time_created = ''
@@ -102,7 +107,7 @@ class UserTest:
         if res == correct_answer:
             self.user_results.append((self.difficulty, self.scores[self.difficulty]))
         else:
-            self.user_results.append((self.difficulty, -1 * self.scores[self.difficulty]))
+            self.user_results.append((self.difficulty, -1 * self.scores_deducted[self.difficulty]))
 
     def calculate_score(self):
         for item in self.user_results:

@@ -15,6 +15,9 @@
             size_hint_x: .65
             type: "determinate"
             value: 0
+            color: 'cyan'
+            back_color: 1, 1, 1, 0
+
         MDGridLayout:
             height: self.minimum_height
             cols: 3
@@ -27,6 +30,7 @@
                 size_hint_x: .1
                 value: 0
                 type: "indeterminate"
+                back_color: 1, 1, 1, 0
 
             MDFloatLayout:
 
@@ -34,10 +38,11 @@
                     id: question_label
                     pos_hint: {"center_x": .5, "center_y": .65}
                     halign: 'center'
-                    text: "Click button to start"
+                    text: "Click 'Next question' to start"
                     font_style: "H4"
                     theme_text_color: "Custom"
-                    text_color: "blue"
+                    text_color: "#2B90FF"
+                    bold: False
 
                 MDTextField:
                     id: answer_input
@@ -67,6 +72,7 @@
                 size_hint_x: .1
                 value: 0
                 type: "indeterminate"
+                back_color: 1, 1, 1, 0
 #    id: test_screen
 #    name: "Quiz"
 #

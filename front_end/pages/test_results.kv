@@ -105,9 +105,9 @@
                 text: "New test"
                 font_style: "Subtitle1"
                 pos_hint: {"center_x": 0.7, "center_y": .15}
-                on_release: app.new_test(False)
+                on_release: app.on_menu_click("Start test")
             MDRaisedButton:
                 text: "Retry test"
                 font_style: "Subtitle1"
                 pos_hint: {"center_x": 0.3, "center_y": .15}
-                on_release: app.new_test(True)
+                on_release: app.start_new_test()

@@ -7,6 +7,8 @@ from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import ObjectProperty, StringProperty
+from kivymd.uix import progressbar
+
 
 # from back_end.database_manager import create_password_table
 # from back_end.database_manager import insert_into_password_table
@@ -19,100 +21,14 @@ from back_end.hashing import password_to_denary
 from back_end.user import User
 from back_end.usertest import UserTest
 
-
+# p = progressbar.MDProgressBar()
+# p.co
 class AppLayout(MDBoxLayout):
     email = StringProperty()
     password = StringProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # self.dbm = DatabaseManager()
-        # self.dbm.create_tables()
-
-    # def clear_login_fields(self):
-    #     # Method that clears login fields used in several scenarios (i.e. wrong password etc.)
-    #     self.ids['email'].text = ""
-    #     self.ids['password'].text = ""
-
-    # def login(self):
-    #
-    #     # Input from text boxes assigned to individual variables
-    #     email = self.ids['email'].text
-    #     password = self.ids['password'].text
-    #
-    #     # Making sure all input login fields are filled
-    #     if email == '' and password == '':
-    #         toast("Email and password are required")
-    #         return
-    #
-    #     if email == '':
-    #         toast("Email is required ")
-    #         return
-    #
-    #     if password == '':
-    #         toast("Password is required")
-    #         return
-    #
-    #     # Allows admin to login - privileges to be determined
-    #     if email == "admin" and password == "admin":
-    #         self.ids.login_screen_manager.current = "Application"
-    #         self.ids.app_screen_manager.transition.direction = "right"
-    #
-    #         self.clear_login_fields()
-    #     else:
-    #         # Runs inputted password and salt through same hashing algorithm
-    #         user = self.dbm.check_login(email, password)
-    #         if user is not None:
-    #             # If hash of inputted password and hash of password in table equal
-    #             self.ids.login_screen_manager.current = "Application"
-    #             self.ids.app_screen_manager.transition.direction = "right"
-    #
-    #             self.clear_login_fields()
-    #         else:
-    #             toast("Wrong email or password")
-
-    # def clear_register_fields(self):
-    #     self.ids['reg_name'].text = ""
-    #     self.ids['reg_email'].text = ""
-    #     self.ids['reg_password'].text = ""
-    #     self.ids['reg_confirm_password'].text = ""
-    #
-    # def register(self, name, email, password, confirm_password):
-    #
-    #     # Making sure all input login fields are filled
-    #     if name.text == '':
-    #         toast('Name required')
-    #         # Returning nothing prevents user advancing from current page (i.e. user has to check their inputs)
-    #         return
-    #
-    #     if email.text == '':
-    #         toast('Email required')
-    #         return
-    #
-    #     if password.text == '' or confirm_password.text == '':
-    #         toast('Password(s) required')
-    #         return
-    #
-    #     if password.text != confirm_password.text:
-    #         # No toast since message (passwords not the same) is already displayed under textfield dynamically
-    #         return
-    #
-    #     if len(password.text) < 6:
-    #         # No toast since message (passwords length less than 6) is already displayed under textfield dynamically
-    #         return
-    #
-    #     # Passwords table created in database
-    #
-    #     user = self.dbm.insert_user(name.text, email.text, password.text)
-    #     # Password fed into hashing algorithm
-    #     if user is None:
-    #         # Checks if inputted email has already been used to register
-    #         toast("Account already registered under email")
-    #     else:
-    #         # User has successfully logged in
-    #         self.ids.login_screen_manager.current = "Application"
-    #         self.ids.app_screen_manager.transition.direction = "left"
-    #         self.clear_register_fields()
 
 
 class MainApp(MDApp):
@@ -184,21 +100,17 @@ class MainApp(MDApp):
             max_height=200
         )
 
-    def new_test(self, retry_bool):
-        if not retry_bool:
-            self.root.ids.app_screen_manager.current = "Start test"
-            self.test_settings = {}
-            self.screen.ids.difficulty_button.set_item('Difficulty')
-            self.screen.ids.operator_button.set_item('Operator')
-            self.screen.ids.duration_button.set_item('Duration')
-        else:
-            self.root.ids.app_screen_manager.current = "Start test"
-            self.screen.ids.difficulty_button.set_item(f'Difficulty: {self.test_settings["Difficulty"]}')
-            self.screen.ids.operator_button.set_item(f'Operator: {self.test_settings["Operator"]}')
-            time = '{:g}'.format(int(self.test_settings["Duration"]) / 60)
-            self.screen.ids.duration_button.set_item(f'{time} min')
+    def reset_test_page(self):
+        self.root.ids.app_screen_manager.screens[4].ids.question_label.text = "Click 'Next question' to start"
+        self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H4'
+        self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
+        self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = 0
+        self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = 0
+        self.root.ids.app_screen_manager.screens[4].ids.question_label.bold = False
+        self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.stop()
 
     def stop_user_test(self, dt):
+        self.reset_test_page()
         total_points = 0
         correct_answers = 0
         logger.debug('Stopping the test')
@@ -277,6 +189,7 @@ class MainApp(MDApp):
                 return
         else:
             self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H3'
+            self.root.ids.app_screen_manager.screens[4].ids.question_label.bold = True
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
             Clock.schedule_once(self.stop_user_test, self.user_test.duration)
@@ -309,9 +222,10 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[4].ids.question_label.text = ' '.join(map(str, question))
 
     def start_new_test(self):
-        self.screen.ids.difficulty_button.set_item('Difficulty')
-        self.screen.ids.operator_button.set_item('Operator')
-        self.screen.ids.duration_button.set_item('Duration')
+        self.reset_test_page()
+        self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = True
+        self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H4'
+        self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.value = 0
 
         if len(self.test_settings) < 3:
             toast('Please fill in all required fields')
@@ -324,6 +238,9 @@ class MainApp(MDApp):
                 duration=self.test_settings['Duration'],
                 question_operator=self.test_settings['Operator']
             )
+            self.user_test.questions = []
+            self.user_test.user_results = []
+
             self.root.ids.app_screen_manager.current = "Quiz"
             self.root.ids.app_screen_manager.transition.direction = "right"
 
@@ -437,5 +354,5 @@ TODO:
 - "Save db file into backend python package"
 - Enable update button once something has been changed in settings page
 - Animation for switching screens
-- Login button to direct user to home page not 'Application'
+- Change mathematical signs to actual words?
 '''
