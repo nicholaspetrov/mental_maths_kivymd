@@ -7,7 +7,7 @@ from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import ObjectProperty, StringProperty
-from kivymd.uix import progressbar
+from kivy.uix.image import Image
 
 
 # from back_end.database_manager import create_password_table
@@ -21,8 +21,7 @@ from back_end.hashing import password_to_denary
 from back_end.user import User
 from back_end.usertest import UserTest
 
-# p = progressbar.MDProgressBar()
-# p.co
+
 class AppLayout(MDBoxLayout):
     email = StringProperty()
     password = StringProperty()
@@ -95,7 +94,7 @@ class MainApp(MDApp):
         self.duration_menu = MDDropdownMenu(
             caller=self.screen.ids.duration_button,
             items=duration_items,
-            position="bottom",
+            position="center",
             width_mult=2.5,
             max_height=200
         )
@@ -202,8 +201,9 @@ class MainApp(MDApp):
                 self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = current_correct
             else:
                 if self.user_test.user_results[-1][1] == 0:
-                    current_incorrect += 1
-                    self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
+                    # current_incorrect += 1
+                    # self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
+                    pass
                 else:
                     current_incorrect += -(self.user_test.user_results[-1][1])
                     self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
@@ -254,6 +254,7 @@ class MainApp(MDApp):
         self.user = None
         self.root.ids.login_screen_manager.current = "Login"
         self.root.ids.login_screen_manager.transition.direction = "right"
+        self.reset_test_page()
 
     def clear_register_fields(self):
         self.root.ids.reg_name.text = ""
@@ -350,9 +351,11 @@ MainApp().run()
 
 '''
 TODO:
-- Change TopAppBar title with username or page name when logged in
 - "Save db file into backend python package"
 - Enable update button once something has been changed in settings page
 - Animation for switching screens
 - Change mathematical signs to actual words?
+- Python can send emails
+- RegEx for email - correct form
+- https://stackoverflow.com/questions/44617793/image-size-on-kivy example of background picture
 '''

@@ -4,22 +4,36 @@
 
     MDCard:
         size_hint: None, None
-        size: 300, 450
+        size: 300, 400
         pos_hint: {"center_x": 0.5, "center_y":0.5}
         padding: 25
-        spacing: 10
+        spacing: 25
         orientation: 'vertical'
 
         MDLabel:
-            text: "About1"
+            text: "About"
             halign: "center"
             font_style: "H4"
             size_hint_y: None
             height: self.texture_size[1]
+            padding_y: 15
 
         MDLabel:
-            text: "About2"
-            halign: "center"
-            font_style: "H4"
-            size_hint_y: None
-            height: self.texture_size[1]
+            text: "An app designed to strengthen the mental arithmetic skills for non-calculator admissions assessments for University applications"
+            halign: 'center'
+
+        Image:
+            source: 'images/Mcs_oxford_crest.png'
+            size_hint_x: 0.4
+            allow_stretch: True
+            pos_hint: {'center_x': 0.5}
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            MDLabel:
+                halign: 'center'
+                text: 'Nick Petrov'
+
+            MDLabel:
+                halign: 'center'
+                text: 'MCS Oxford 2023'

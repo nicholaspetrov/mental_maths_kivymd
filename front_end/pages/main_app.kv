@@ -189,38 +189,110 @@ AppLayout:
                         name: "Start test"
 
                         MDBoxLayout:
-                            size_hint_y: 0.935
-                            StackLayout:
-                                orientation: "lr-tb"
-                                MDDropDownItem:
-                                    id: difficulty_button
-                                    text: "Difficulty"
-                                    size_hint: 1/3, 0.1
-                                    on_release: app.difficulty_menu.open()
+                            padding: [10, 10, 10, 10]
+                            size_hint_y: 0.89
+                            spacing: 25
+                            orientation: "vertical"
+                    #        pos_hint: {"top": 1}
+                            MDGridLayout:
+                                cols: 2
+                                spacing: 10
 
-                                MDDropDownItem:
-                                    id: operator_button
-                                    text: "Operator"
-                                    size_hint: 1/3, 0.1
-                                    on_release: app.operator_menu.open()
+                                MDCard:
+                                    orientation: 'vertical'
+                                    MDBoxLayout:
+                                        padding: [10, 10, 10, 10]
+                                        MDGridLayout:
+                                            rows: 2
+                                            MDLabel:
+                                                text: 'Scoring'
+                                                bold: True
+                                            MDLabel:
+                                                text: 'Easy, Medium, Hard questions answered correctly score 1, 2, 3 respectively and if answer is incorrect, Easy questions cost you 3, Medium 2 and so on'
 
-                                MDDropDownItem:
-                                    id: duration_button
-                                    text: "Duration"
-                                    size_hint: 1/3, 0.1
-                                    on_release: app.duration_menu.open()
+                                    MDBoxLayout:
+                                        padding: [10, 10, 10, 10]
+                                        MDGridLayout:
+                                            rows: 2
+                                            MDLabel:
+                                                text: 'Timing'
+                                                bold: True
+                                            MDLabel:
+                                                text: 'Once the timer at the top finishes, you will be automatically directed to the results page'
 
-                        MDFloatLayout:
+                                    MDBoxLayout:
+                                        padding: [10, 10, 10, 10]
+                                        MDGridLayout:
+                                            rows: 2
+                                            MDLabel:
+                                                text: 'Mixed'
+                                                bold: True
+                                            MDLabel:
+                                                text: 'When Mixed is selected in the difficulty dropdown, you will be tested on a series of Easy, Medium and Hard questions on the selected operator'
+
+                                    MDBoxLayout:
+                                        padding: [10, 10, 10, 10]
+                                        MDGridLayout:
+                                            rows: 2
+                                            MDLabel:
+                                                text: 'Skipping'
+                                                bold: True
+                                            MDLabel:
+                                                text: "If you don't know the answer to the question, you can press enter without typing anything in the box to skip the question"
+
+
+                                MDCard:
+                                    orientation: 'vertical'
+                                    spacing: 20
+                                    MDGridLayout:
+                                        padding: [10, 10, 10, 10]
+                                        rows: 5
+                                        MDLabel:
+                                            text: 'Test settings:'
+                                            font_style: 'H6'
+                                            bold: True
+                                        MDGridLayout:
+                                            rows: 3
+                                            spacing: 20
+                                            MDDropDownItem:
+                                                id: difficulty_button
+                                                text: "Difficulty"
+                                                size_hint: 1/3, 0.1
+                                                on_release: app.difficulty_menu.open()
+
+                                            MDDropDownItem:
+                                                id: operator_button
+                                                text: "Operator"
+                                                size_hint: 1/3, 0.1
+                                                on_release: app.operator_menu.open()
+
+                                            MDDropDownItem:
+                                                id: duration_button
+                                                text: "Duration"
+                                                size_hint: 1/3, 0.1
+                                                on_release: app.duration_menu.open()
+                                        Image:
+                                            source: 'images/pie-chart-example.jpg'
+                                            size_hint_x: 0.4
+                                            allow_stretch: True
+
+#                                        MDLabel:
+#                                            text: ''
+#                                        MDLabel:
+#                                            text: ''
+#                                        MDLabel:
+#                                            text: ''
+
+
 
                             MDRaisedButton:
-                                pos_hint: {"center_x": .5, "center_y": .4}
+                                pos_hint: {"center_x": .5}
                                 text: "Start test"
+                                size_hint: None, None
+                                size: 20, 300
+
                                 on_release:
                                     app.start_new_test()
-                            MDLabel:
-                                id: test_label
-                                halign: "center"
-                                text: ""
 
                 MDNavigationDrawer:
                     id: nav_drawer
