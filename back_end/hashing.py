@@ -35,7 +35,6 @@ def hashing(value):
     start = 0
     end = len(value)
     step = 2
-    comparison = []
     xor_comparisons = []
     for i in range(start, end, step):
         comparison = (value[i:i + step])

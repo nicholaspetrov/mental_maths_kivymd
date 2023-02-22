@@ -8,7 +8,7 @@
     right_action_items: [["logout", lambda x: app.exit_app()]]
 
 <MyLoginAndRegToolbar@MDTopAppBar>:
-    title: "Mental"
+    title: "BrainCalc"
     pos_hint:{"top": 1}
 
 
@@ -215,10 +215,10 @@ AppLayout:
                                         MDGridLayout:
                                             rows: 2
                                             MDLabel:
-                                                text: 'Timing'
+                                                text: 'Progress bars'
                                                 bold: True
                                             MDLabel:
-                                                text: 'Once the timer at the top finishes, you will be automatically directed to the results page'
+                                                text: 'Based on the difficulty of the question, the progress bars will increase by the points awarded or lost after answering the question correctly or incorrectly'
 
                                     MDBoxLayout:
                                         padding: [10, 10, 10, 10]
@@ -238,7 +238,7 @@ AppLayout:
                                                 text: 'Skipping'
                                                 bold: True
                                             MDLabel:
-                                                text: "If you don't know the answer to the question, you can press enter without typing anything in the box to skip the question"
+                                                text: "If you don't know the answer to the question, you can press enter on the keyboard without typing anything in the box to skip the question"
 
 
                                 MDCard:
@@ -300,7 +300,7 @@ AppLayout:
                     MDNavigationDrawerMenu:
 
                         MDNavigationDrawerHeader:
-                            title: "Mental"
+                            title: "BrainCalc"
 
         #               https://pictogrammers.com/library/mdi/
                         MDNavigationDrawerItem:

@@ -62,23 +62,23 @@ class MainApp(MDApp):
         self.difficulty_menu = MDDropdownMenu(
             caller=self.screen.ids.difficulty_button,
             items=difficulty_items,
-            position="bottom",
+            position="auto",
             width_mult=2.5,
             max_height=200
         )
 
-        operators = ['+', '-', '/', '*']
+        operators = ['Addition +', 'Subtraction -', 'Division /', 'Multiplication *']
         operator_items = [
             {
                 "text": operator,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=f'Operator: {operator}': self.menu_callback('Operator', x.split(' ')[1]),
+                "on_release": lambda x=f'Operator: {operator}': self.menu_callback('Operator', x.split(' ')[2]),
             } for operator in operators
         ]
         self.operator_menu = MDDropdownMenu(
             caller=self.screen.ids.operator_button,
             items=operator_items,
-            position="bottom",
+            position="auto",
             width_mult=2.5,
             max_height=200
         )
@@ -94,7 +94,7 @@ class MainApp(MDApp):
         self.duration_menu = MDDropdownMenu(
             caller=self.screen.ids.duration_button,
             items=duration_items,
-            position="center",
+            position="top",
             width_mult=2.5,
             max_height=200
         )
@@ -222,6 +222,7 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[4].ids.question_label.text = ' '.join(map(str, question))
 
     def start_new_test(self):
+        toast('Good luck!')
         self.reset_test_page()
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = True
         self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H4'
@@ -354,7 +355,6 @@ TODO:
 - "Save db file into backend python package"
 - Enable update button once something has been changed in settings page
 - Animation for switching screens
-- Change mathematical signs to actual words?
 - Python can send emails
 - RegEx for email - correct form
 - https://stackoverflow.com/questions/44617793/image-size-on-kivy example of background picture
