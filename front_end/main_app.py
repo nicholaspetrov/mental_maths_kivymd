@@ -225,23 +225,28 @@ class MainApp(MDApp):
         toast('Good luck!')
         self.reset_test_page()
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = True
+        # Prevents user from typing into enter box - enabled once test has officially started
         self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H4'
         self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.value = 0
 
         if len(self.test_settings) < 3:
+            # Making sure all test settings has been filled in
             toast('Please fill in all required fields')
             return
         else:
             logger.debug(f'Starting new test: {self.test_settings}')
+            # UserTest object created based on the inputs used as attributes
             self.user_test = UserTest(
                 user_id=1,
                 difficulty=self.test_settings['Difficulty'],
                 duration=self.test_settings['Duration'],
                 question_operator=self.test_settings['Operator']
             )
+            # Resets what questions were asked and results - when test is restarted/new one made and tried
             self.user_test.questions = []
             self.user_test.user_results = []
 
+            # Directs user to actual quiz page
             self.root.ids.app_screen_manager.current = "Quiz"
             self.root.ids.app_screen_manager.transition.direction = "right"
 
