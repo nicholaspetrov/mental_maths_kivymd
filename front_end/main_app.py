@@ -176,10 +176,14 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.focus = True
 
     def get_next_question(self):
+        # User now able to type answer into text box
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = False
         if len(self.user_test.questions) > 0:
+            # If this isn't the first question asked
             answer = self.root.ids.app_screen_manager.screens[4].ids.answer_input.text
+            # Answer retrieved from text box
             if answer.lstrip("-").isdigit() or answer == '':
+                # Validates answer input - prevents strings of letters from being inputted whilst allowing negative sign
                 logger.debug(f'Storing answer: {answer}')
                 self.user_test.check_answer(int(answer) if len(answer) > 0 else 0)
             else:
@@ -187,38 +191,51 @@ class MainApp(MDApp):
                 self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
                 return
         else:
+            # Label that displays question now made bold and increases in size
             self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H3'
             self.root.ids.app_screen_manager.screens[4].ids.question_label.bold = True
+            # Sets the duration of the horizontal timer progress bar on top of screen based on what was inputted in the
+            # prior test construction page
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            # Timer + progress bar started
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
             Clock.schedule_once(self.stop_user_test, self.user_test.duration)
 
+        # Values for points gained or lost after answering the question correctly or incorrectly stored - later used for
+        # displaying green and red progress bars
         current_correct = self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value
         current_incorrect = self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value
         if len(self.user_test.questions) > 0:
             if self.user_test.user_results[-1][1] > 0:
+                # If points scored are positive, then question has been answered correctly (back in class UserTest)
                 current_correct += self.user_test.user_results[-1][1]
+                # Green progress bar increases accordingly by how many points was just gained
                 self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = current_correct
             else:
                 if self.user_test.user_results[-1][1] == 0:
-                    # current_incorrect += 1
-                    # self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
+                    # If nothing was inputted (i.e. User has skipped question) - no points lost or gained
                     pass
                 else:
+                    # Red progress bar increases accordingly by how many points was just lost
                     current_incorrect += -(self.user_test.user_results[-1][1])
                     self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
         else:
             pass
 
+        # If either progress bar fills completely, progress bar resets
         if current_correct >= 100:
             self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = 0
         if current_incorrect >= 100:
             self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = 0
 
+        # After user submitted answer, text in input box emptied
         self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
+        # Next question retrieved using same very method
         question = self.user_test.get_next_question()
+        # Keeps focus on enter button - User essentially never has to use the mouse (just type answer and enter, then repeat)
         Clock.schedule_once(self.refocus_ti)
         logger.debug(f'Generating next question: {question}')
+        # Tuple (question) replaces the "Click 'Next question' to start" in visually appealing format
         self.root.ids.app_screen_manager.screens[4].ids.question_label.text = ' '.join(map(str, question))
 
     def start_new_test(self):
