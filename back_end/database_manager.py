@@ -14,6 +14,7 @@ class DatabaseManager:
         self.db_name = db_name
 
     def get_db_connection(self):
+        # Establishes database connection
         try:
             conn = sqlite3.connect(self.db_name)
             return conn
@@ -21,15 +22,18 @@ class DatabaseManager:
             logger.error(e)
 
     def close_db_conn(self, conn):
+        # Closes database connection
         if conn is not None:
             conn.close()
 
 
     def create_tables(self):
+        # For creating users and tests table
         logger.info('Creating database tables...')
         conn = self.get_db_connection()
         conn.execute("PRAGMA foreign_keys = 1")
         c = conn.cursor()
+        # Salt and hash stored in table rather than password - harder to hack
         c.execute('''
             CREATE TABLE IF NOT EXISTS users
             (
@@ -69,8 +73,10 @@ class DatabaseManager:
         logger.info('Database tables created successfully')
 
     def insert_user(self, name, email, password):
+        # Registering account for first time
         logger.info(f'Inserting new user: {email}')
         try:
+            # Password run through hashing algorithm which automatically generates a salt and produces a hash
             salt, hashed_pwd = password_to_denary(password)
 
             conn = self.get_db_connection()
@@ -87,9 +93,11 @@ class DatabaseManager:
                 logger.info(f'{email} already registered')
                 return None
             else:
+                # If new email then email and salt, hash from password inserted into users table
                 result = c.execute('INSERT INTO users(name, email, salt, hashed_pwd) VALUES(?, ?, ?, ?)', (name, email, salt, hashed_pwd))
                 conn.commit()
                 logger.info(f'New user registered under {email}')
+                # User object created with attributes filled out with inputs from actual user
                 user = User(name=name, email=email, user_id=result.lastrowid, password=None)
                 return user
         except Exception as e:
@@ -98,6 +106,7 @@ class DatabaseManager:
             self.close_db_conn(conn)
 
     def check_login(self, email, password):
+        # Logging into account
         logger.info(f'Checking login for email: {email}')
         try:
             conn = self.get_db_connection()
@@ -105,10 +114,8 @@ class DatabaseManager:
             sql = "SELECT * FROM users WHERE email = ?"
             c.execute(sql, (email,))
             records = c.fetchall()
-            # if len(records) == 0:
-            #     self.close_db_conn(conn)
-            #     return None
-            # else:
+            # Salt, hash retrieved - later used to compare salt and hash produced from password inputted by user
+            # attempting to log in and if equal (i.e. password entered correctly), user allowed into app
             salt = records[0][3]
             hashed_pwd = records[0][4]
             if hashed_pwd == login(password, salt):
@@ -149,6 +156,7 @@ class DatabaseManager:
         try:
             conn = self.get_db_connection()
             c = conn.cursor()
+            # Returns time in %Y-%m-%d %H:%M:%S format
             test.time_created = get_string_for_datetime()
             sql = '''
             INSERT INTO tests(difficulty, duration, test_type, score, time_created, user_id) 
