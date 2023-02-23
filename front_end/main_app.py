@@ -16,6 +16,7 @@ from kivy.uix.image import Image
 # from back_end.database_manager import check_user_exists
 
 from back_end.database_manager import DatabaseManager
+# from back_end import authenticator
 
 from back_end.hashing import password_to_denary
 from back_end.user import User
@@ -110,7 +111,7 @@ class MainApp(MDApp):
 
     def stop_user_test(self, dt):
         self.reset_test_page()
-        total_points = 0
+        total_possible_points = 0
         correct_answers = 0
         logger.debug('Stopping the test')
         self.active = False
@@ -121,11 +122,11 @@ class MainApp(MDApp):
             if result[1] > 0:
                 correct_answers += 1
             if result[0] == 'Easy':
-                total_points += 1
+                total_possible_points += 1
             elif result[0] == 'Medium':
-                total_points += 2
+                total_possible_points += 2
             else:
-                total_points += 3
+                total_possible_points += 3
 
         questions_answered = len(self.user_test.user_results)
 
@@ -140,14 +141,14 @@ class MainApp(MDApp):
         if self.user_test.score < 0:
             self.root.ids.app_screen_manager.screens[6].ids.score_label.text = '0'
         else:
-            self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_points)}'
+            self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
 
         if questions_answered == 0:
             self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
             self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = '0'
         else:
             self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
-            self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(round(number_of_seconds/questions_answered, 2))} seconds per question'
+            self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(round(number_of_seconds/self.user_test.score, 2))} seconds per point'
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':
@@ -309,11 +310,14 @@ class MainApp(MDApp):
             # No toast since message (passwords length less than 6) is already displayed under textfield dynamically
             return
 
-        user = self.dbm.insert_user(name.text, email.text, password.text)
-        # Password fed into hashing algorithm
-        if user is not None:
+        result = authenticator.signup(email=email.text, password=password.text, name=name.text)
+        if result is not None:
             # User has successfully logged in
-            self.user = user
+            self.user = User(
+                name=name.text,
+                email=email.text,
+                user_id=result['localId']
+            )
             self.root.ids.login_screen_manager.current = "Application"
             self.root.ids.app_screen_manager.transition.direction = "left"
             self.user_name = self.user.name
@@ -321,6 +325,19 @@ class MainApp(MDApp):
         else:
             # Checks if inputted email has already been used to register
             toast("Account already registered under email")
+
+        # user = self.dbm.insert_user(name.text, email.text, password.text)
+        # Password fed into hashing algorithm
+        # if user is not None:
+        #     # User has successfully logged in
+        #     self.user = user
+        #     self.root.ids.login_screen_manager.current = "Application"
+        #     self.root.ids.app_screen_manager.transition.direction = "left"
+        #     self.user_name = self.user.name
+        #     self.clear_register_fields()
+        # else:
+        #     # Checks if inputted email has already been used to register
+        #     toast("Account already registered under email")
 
     def clear_login_fields(self):
         # Method that clears login fields used in several scenarios (i.e. wrong password etc.)
