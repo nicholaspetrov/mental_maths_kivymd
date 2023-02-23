@@ -24,9 +24,11 @@ AppLayout:
             id: login_screen
             name: "Login"
 
+            # Establishes taskbar on top side of screen without exit button (just title)
             MyLoginAndRegToolbar:
 
             MDCard:
+                # Separates screen from actually important login bits
                 size_hint: None, None
                 size: 300, 400
                 pos_hint: {"center_x": 0.5, "center_y":0.5}
@@ -35,6 +37,7 @@ AppLayout:
                 orientation: 'vertical'
 
                 MDLabel:
+                    # Title 'Log In'
                     text: "Log In"
                     halign: "center"
                     font_style: "H4"
@@ -42,6 +45,7 @@ AppLayout:
                     height: self.texture_size[1]
                     padding_y: 15
                 MDTextField:
+                    # Input box for email
                     id: email
                     pos_hint: {"center_x": .5}
                     size_hint_x: None
@@ -52,6 +56,7 @@ AppLayout:
                     multiline: False
                     on_text_validate: app.login()
                 MDTextField:
+                    # Input box for password
                     id: password
                     hint_text: "Password "
                     pos_hint: {"center_x": .5}
@@ -64,12 +69,14 @@ AppLayout:
                     on_text_validate: app.login()
 
                 MDRaisedButton:
+                    # Login button that when clicked calls login() method in main_app.py
                     id: login_button
                     text: "LOGIN"
                     pos_hint: {"center_x": 0.5}
                     on_release: app.login()
 
                 MDTextButton:
+                    # If clicked, user is redirected to Registration page using ScreenManager
                     id: reg_button
                     text: "Haven't got an account? Register"
                     color: 0, 0.5, 1
@@ -83,10 +90,12 @@ AppLayout:
             id: reg_screen
             name: "Registration"
 
+            # Same taskbar except exit button, which redirects user to login screen, is added
             MyLoginAndRegToolbar:
                 right_action_items: [["logout", lambda x: app.exit_app()]]
 
             MDCard:
+                # Separates screen from actually important registration bits
                 size_hint: None, None
                 size: 300, 450
                 pos_hint: {"center_x": 0.5, "center_y":0.5}
@@ -95,22 +104,29 @@ AppLayout:
                 orientation: 'vertical'
 
                 MDLabel:
+                    # Registration title
                     text: "Registration"
                     halign: "center"
                     font_style: "H4"
                     size_hint_y: None
                     height: self.texture_size[1]
                 MDTextField:
+                    # Name input - used as taskbar title when user logs in
                     id: reg_name
                     hint_text: "Name "
                     pos_hint: {"center_x": .5}
                     size_hint_x: None
                     helper_text_mode: "on_focus"
+                    # Allows user to progress to next input box by pressing tab
                     write_tab: False
                     width: 200
                     multiline: False
+                    # Validates inputs by calling register()
+                    # Allows user to submit inputs by them pressing enter on keyboard - consistent for every other input
+                    # Message is displayed if something is in incorrect format or empty and another input is prompted
                     on_text_validate: root.register(reg_name, reg_email, reg_password, reg_confirm_password)
                 MDTextField:
+                    # Email input
                     id: reg_email
                     hint_text: "Email "
                     pos_hint: {"center_x": .5}
@@ -121,10 +137,12 @@ AppLayout:
                     multiline: False
                     on_text_validate: app.register(reg_name, reg_email, reg_password, reg_confirm_password)
                 MDTextField:
+                    # Password input
                     id: reg_password
                     hint_text: "Password "
                     pos_hint: {"center_x": .5}
                     size_hint_x: None
+                    # Makes sure password is at least 6 characters long and presents a message if that's not the case
                     helper_text: "" if reg_password.text=='' else "Password has to be at least 6 characters long" if len(reg_password.text)<6 else ""
                     helper_text_mode: "on_focus" if reg_password.text=='' else "on_error" if len(reg_password.text)<6 else "on_focus"
                     error : False if reg_password.text=='' else True if len(reg_password.text)<6 else False
@@ -134,6 +152,7 @@ AppLayout:
                     multiline: False
                     on_text_validate: app.register(reg_name, reg_email, reg_password, reg_confirm_password)
                 MDTextField:
+                    # Confirm password input
                     id: reg_confirm_password
                     hint_text: "Confirm password "
                     pos_hint: {"center_x": .5}
@@ -141,6 +160,7 @@ AppLayout:
                     helper_text_mode: "on_focus"
                     password: True
                     write_tab: False
+                    # Makes sure both password inputs are same (for user - makes sure they definitely know what their password is)
                     helper_text: "" if reg_confirm_password.text=='' else "Passwords do not match" if reg_confirm_password.text!=reg_password.text else ""
                     helper_text_mode: "on_focus" if reg_confirm_password.text=='' else "on_error" if reg_confirm_password.text!=reg_password.text else "on_focus"
                     error : False if reg_confirm_password.text=='' else True if reg_confirm_password.text!=reg_password.text else False
@@ -149,6 +169,7 @@ AppLayout:
                     on_text_validate: app.register(reg_name, reg_email, reg_password, reg_confirm_password)
 
                 MDRaisedButton:
+                    # Button that submits inputs for registration
                     id: reg_button
                     text: "Register"
                     pos_hint: {"center_x": 0.5}
@@ -156,6 +177,7 @@ AppLayout:
                         app.register(reg_name, reg_email, reg_password, reg_confirm_password)
 
                 MDTextButton:
+                    # When clicked, user is redirected to login page
                     id: login_button
                     text: "Already have an account? Login"
                     color: 0, 0.5, 1
@@ -169,6 +191,7 @@ AppLayout:
             id: app_screen
             name: "Application"
 
+            # Taskbar on top side of screen except title is Username
             MyAppTopAppBar:
 
             MDNavigationLayout:
@@ -176,6 +199,7 @@ AppLayout:
                 MDScreenManager:
                     id: app_screen_manager
 
+                    # Specific pages imported from pages folder - refactored, easier to manage pages
                     Home:
                     Account:
                     Stats:
@@ -189,16 +213,18 @@ AppLayout:
                         name: "Start test"
 
                         MDBoxLayout:
+                            # Spacing from window border
                             padding: [10, 10, 10, 10]
                             size_hint_y: 0.89
                             spacing: 25
                             orientation: "vertical"
-                    #        pos_hint: {"top": 1}
                             MDGridLayout:
+                                # 2 columns, test description and test settings
                                 cols: 2
                                 spacing: 10
 
                                 MDCard:
+                                    # Test description column
                                     orientation: 'vertical'
                                     MDBoxLayout:
                                         padding: [10, 10, 10, 10]
@@ -242,6 +268,7 @@ AppLayout:
 
 
                                 MDCard:
+                                    # Test settings column
                                     orientation: 'vertical'
                                     spacing: 20
                                     MDGridLayout:
@@ -254,6 +281,7 @@ AppLayout:
                                         MDGridLayout:
                                             rows: 3
                                             spacing: 20
+                                            # Difficulty, operation, duration dropdown selections
                                             MDDropDownItem:
                                                 id: difficulty_button
                                                 text: "Difficulty"
@@ -271,25 +299,18 @@ AppLayout:
                                                 text: "Duration"
                                                 size_hint: 1/3, 0.1
                                                 on_release: app.duration_menu.open()
+                                        # Test image - to be some stats
                                         Image:
                                             source: 'images/pie-chart-example.jpg'
                                             size_hint_x: 0.4
                                             allow_stretch: True
-
-#                                        MDLabel:
-#                                            text: ''
-#                                        MDLabel:
-#                                            text: ''
-#                                        MDLabel:
-#                                            text: ''
-
-
 
                             MDRaisedButton:
                                 pos_hint: {"center_x": .5}
                                 text: "Start test"
                                 size_hint: None, None
                                 size: 20, 300
+                                # When clicked, start_new_test() is called
 
                                 on_release:
                                     app.start_new_test()
@@ -298,14 +319,17 @@ AppLayout:
                     id: nav_drawer
 
                     MDNavigationDrawerMenu:
+                        # Pop-out side menu
 
                         MDNavigationDrawerHeader:
                             title: "BrainCalc"
 
         #               https://pictogrammers.com/library/mdi/
+                        # All navigable items in menu
                         MDNavigationDrawerItem:
                             icon: "home"
                             text: "Home"
+                            # Text run through on_menu_click(), which redirects user to page with corresponding title
                             on_release: app.on_menu_click(self.text)
 
                         MDNavigationDrawerItem:

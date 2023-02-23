@@ -5,11 +5,13 @@
     MDBoxLayout:
         size_hint_y: 0.885
         padding: [10, 10, 10, 10]
-#        size_hint_x: 0.9
         orientation: 'vertical'
         columns: 3
         spacing: 10
+        # 3 horizontal cards of same size placed on top of each other
+        # Since MDCards built into MDBoxLayout, whenever BoxLayout is stretched, all cards increase in size proportionally
         MDCard:
+            # Top card - displaying what settings were selected for the test that just finished
             orientation: 'vertical'
             MDLabel:
                 text: 'Test settings'
@@ -19,16 +21,19 @@
                 size_hint_y: None
                 cols: 2
                 MDLabel:
+                    # Difficulty label
                     padding_x: 50
                     text: 'Difficulty: '
                     font_style: "Subtitle1"
                 MDLabel:
+                    # Difficulty label with actual value retrieved using id: difficulty_label
                     id: difficulty_label
                     padding_x: 50
                     text: ''
                     font_style: "Subtitle1"
 
                 MDLabel:
+                    # Same as above
                     padding_x: 50
                     text: 'Operator: '
                     font_style: "Subtitle1"
@@ -39,6 +44,7 @@
                     font_style: "Subtitle1"
 
                 MDLabel:
+                    # Same as above
                     padding_x: 50
                     text: 'Duration: '
                     font_style: "Subtitle1"
@@ -49,6 +55,7 @@
                     font_style: "Subtitle1"
 
         MDCard:
+            # Middle card
             orientation: 'vertical'
             MDLabel:
                 text: 'Score'
@@ -58,20 +65,24 @@
                 size_hint_y: None
                 cols: 2
                 MDLabel:
+                    # How many questions answered/how many questions were asked+answered
                     padding_x: 50
                     text: 'Correct answers/Questions answered: '
                     font_style: "Subtitle1"
                 MDLabel:
+                    # correct_answers_label used to replace current text value ('') with calculated value
                     id: correct_answers_label
                     padding_x: 50
                     text: ''
                     font_style: "Subtitle1"
 
                 MDLabel:
+                    # Points scored (after deductions whenever question answered incorrectly)/total available points that user could've scored
                     padding_x: 50
                     text: 'Points scored/Total available: '
                     font_style: "Subtitle1"
                 MDLabel:
+                    # score_label used to replace current text value ('') with calculated value
                     id: score_label
                     padding_x: 50
                     text: ''
@@ -82,12 +93,14 @@
                     text: 'Average speed: '
                     font_style: "Subtitle1"
                 MDLabel:
+                    # speed_label used to replace current text value ('') with calculated value
                     id: speed_label
                     padding_x: 50
                     text: ''
                     font_style: "Subtitle1"
 
         MDCard:
+            # Bottom card
             orientation: 'vertical'
             MDLabel:
                 text: 'Graphs/Charts'
@@ -97,7 +110,9 @@
                 text: 'Graphs to be added'
                 halign: 'center'
 
+        # New test and retry test buttons placed in bottom right part of page outside of cards
         MDStackLayout:
+            # Elements in StackLayout stacked from right-to-left and bottom-top (i.e. buttons located at bottom right)
             orientation: 'rl-bt'
             spacing: 10
             padding: 10
