@@ -86,10 +86,18 @@ class UserTest:
         def _get_2_operands(numbers):
             op_1, op_2 = (1, 1)
             # Prevents each operand equaling each other, being 1 or being repeated
-            while op_1 == op_2 or (op_1 == 1 or op_2 == 1) or (op_1, op_2) in self.questions:
-                op_1 = self._random_with_n_digits(numbers[0])
-                op_2 = self._random_with_n_digits(numbers[1])
-            return op_1, op_2
+            if self.question_operator == '/':
+                # Program stops running if on Easy mode and struggles to find any new Easy division questions so
+                # repeating questions allowed only in division
+                while op_1 == op_2 or (op_1 == 1 or op_2 == 1):
+                    op_1 = self._random_with_n_digits(numbers[0])
+                    op_2 = self._random_with_n_digits(numbers[1])
+                return op_1, op_2
+            else:
+                while op_1 == op_2 or (op_1 == 1 or op_2 == 1) or (op_1, op_2) in self.questions:
+                    op_1 = self._random_with_n_digits(numbers[0])
+                    op_2 = self._random_with_n_digits(numbers[1])
+                return op_1, op_2
 
         operand_1, operand_2 = (1, 1)
 

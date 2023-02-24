@@ -138,17 +138,18 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[6].ids.operator_label.text = self.test_settings['Operator']
         self.root.ids.app_screen_manager.screens[6].ids.duration_label.text = f'{time} min'
 
-        if self.user_test.score < 0:
-            self.root.ids.app_screen_manager.screens[6].ids.score_label.text = '0'
-        else:
-            self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
-
         if questions_answered == 0:
             self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
             self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = '0'
         else:
-            self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
-            self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(round(number_of_seconds/self.user_test.score, 2))} seconds per point'
+            if self.user_test.score < 0 or self.user_test.score == 0:
+                self.root.ids.app_screen_manager.screens[6].ids.score_label.text = '0'
+                self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
+                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = '0'
+            else:
+                self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
+                self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
+                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(round(number_of_seconds/self.user_test.score, 2))} seconds per point'
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':
@@ -186,6 +187,7 @@ class MainApp(MDApp):
             if answer.lstrip("-").isdigit() or answer == '':
                 # Validates answer input - prevents strings of letters from being inputted whilst allowing negative sign
                 logger.debug(f'Storing answer: {answer}')
+                # If nothing is entered (i.e. question skipped), 0 is added to result
                 self.user_test.check_answer(int(answer) if len(answer) > 0 else 0)
             else:
                 toast('Invalid answer')
