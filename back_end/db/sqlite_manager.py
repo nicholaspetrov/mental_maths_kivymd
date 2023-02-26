@@ -2,14 +2,13 @@ import sqlite3
 from loguru import logger
 
 from back_end.hashing import login
-from back_end.usertest import UserTest
 from back_end.user import User
-from back_end.test_history import TestHistory
 from back_end.hashing import password_to_denary
 from back_end.utils import get_string_for_datetime
+from back_end.db.database_manager import DatabaseManager
 
 
-class DatabaseManager:
+class SqliteManager(DatabaseManager):
     def __init__(self, db_name='mental_database.db'):
         self.db_name = db_name
 

@@ -6,19 +6,17 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
-from kivy.properties import ObjectProperty, StringProperty
-from kivy.uix.image import Image
+from kivy.properties import StringProperty
 
-
+from back_end.db.firebase_manager import FirebaseManager
 # from back_end.database_manager import create_password_table
 # from back_end.database_manager import insert_into_password_table
 # from back_end.database_manager import check_login
 # from back_end.database_manager import check_user_exists
 
-from back_end.database_manager import DatabaseManager
+from back_end.db.sqlite_manager import SqliteManager
 # from back_end import authenticator
 
-from back_end.hashing import password_to_denary
 from back_end.user import User
 from back_end.usertest import UserTest
 
@@ -40,7 +38,7 @@ class MainApp(MDApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.dbm = DatabaseManager()
+        self.dbm = FirebaseManager()
         self.dbm.create_tables()
         self.user = User('', '')
         Builder.load_file('pages/home.kv')
@@ -312,27 +310,14 @@ class MainApp(MDApp):
             # No toast since message (passwords length less than 6) is already displayed under textfield dynamically
             return
 
-        result = authenticator.signup(email=email.text, password=password.text, name=name.text)
-        if result is not None:
-            # User has successfully logged in
-            self.user = User(
-                name=name.text,
-                email=email.text,
-                user_id=result['localId']
-            )
-            self.root.ids.login_screen_manager.current = "Application"
-            self.root.ids.app_screen_manager.transition.direction = "left"
-            self.user_name = self.user.name
-            self.clear_register_fields()
-        else:
-            # Checks if inputted email has already been used to register
-            toast("Account already registered under email")
-
-        # user = self.dbm.insert_user(name.text, email.text, password.text)
-        # Password fed into hashing algorithm
-        # if user is not None:
+        # result = authenticator.signup(email=email.text, password=password.text, name=name.text)
+        # if result is not None:
         #     # User has successfully logged in
-        #     self.user = user
+        #     self.user = User(
+        #         name=name.text,
+        #         email=email.text,
+        #         user_id=result['localId']
+        #     )
         #     self.root.ids.login_screen_manager.current = "Application"
         #     self.root.ids.app_screen_manager.transition.direction = "left"
         #     self.user_name = self.user.name
@@ -340,6 +325,19 @@ class MainApp(MDApp):
         # else:
         #     # Checks if inputted email has already been used to register
         #     toast("Account already registered under email")
+
+        user = self.dbm.insert_user(name.text, email.text, password.text)
+        # Password fed into hashing algorithm
+        if user is not None:
+            # User has successfully logged in
+            self.user = user
+            self.root.ids.login_screen_manager.current = "Application"
+            self.root.ids.app_screen_manager.transition.direction = "left"
+            self.user_name = self.user.name
+            self.clear_register_fields()
+        else:
+            # Checks if inputted email has already been used to register
+            toast("Email already registered")
 
     def clear_login_fields(self):
         # Method that clears login fields used in several scenarios (i.e. wrong password etc.)
