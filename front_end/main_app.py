@@ -7,6 +7,7 @@ from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import StringProperty
+# from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 
 from back_end.db.firebase_manager import FirebaseManager
 # from back_end.database_manager import create_password_table
@@ -135,6 +136,7 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[6].ids.difficulty_label.text = self.test_settings['Difficulty']
         self.root.ids.app_screen_manager.screens[6].ids.operator_label.text = self.test_settings['Operator']
         self.root.ids.app_screen_manager.screens[6].ids.duration_label.text = f'{time} min'
+        speed = round(number_of_seconds / self.user_test.score, 2)
 
         if questions_answered == 0:
             self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
@@ -147,7 +149,30 @@ class MainApp(MDApp):
             else:
                 self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
                 self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
-                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(round(number_of_seconds/self.user_test.score, 2))} seconds per point'
+                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(speed)} seconds per point'
+
+        user_test = UserTest(
+            user_id=self.user.email,
+            difficulty=self.test_settings['Difficulty'],
+            duration=f'{time} min',
+            question_operator=self.test_settings['Operator']
+        )
+        user_test.set_test_results(
+            total_score=total_possible_points,
+            user_score=self.user_test.score,
+            speed=speed,
+            number_correct=correct_answers,
+            number_incorrect=questions_answered - correct_answers
+        )
+        self.dbm.insert_user_test(user_test)
+
+        test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=self.test_settings['Operator'])
+        x = []
+        y = []
+        for user_test in test_history:
+            x.append(user_test.time_created)
+            y.append(user_test.speed)
+
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':

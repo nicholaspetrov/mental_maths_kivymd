@@ -2,6 +2,7 @@ from random import randrange, randint
 from loguru import logger
 import sys
 import operator
+from datetime import datetime
 
 
 # logger.remove()
@@ -40,14 +41,20 @@ class UserTest:
         'Hard': 1
     }
     score = 0
-    test_id = 0
-    time_created = ''
+    test_id = ''
+    time_created: datetime = None
 
     def __init__(self, user_id, difficulty, duration, question_operator):
         self.user_id = user_id
         self.difficulty = difficulty
         self.duration = duration
         self.question_operator = question_operator
+        self.total_score = None
+        self.user_score = None
+        self.speed = None
+        self.number_incorrect = None
+        self.number_correct = None
+
         self.mixed_mode = False
         if self.difficulty == 'Mixed':
             self.mixed_mode = True
@@ -142,6 +149,14 @@ class UserTest:
         for item in self.user_results:
             self.score += item[1]
         logger.info(f'User {self.user_id} has scored {self.score} points')
+
+    def set_test_results(self, total_score=None, user_score=None, speed=None, number_incorrect=None, number_correct=None, time_created=None):
+        self.total_score = total_score
+        self.user_score = user_score
+        self.speed = speed
+        self.number_incorrect = number_incorrect
+        self.number_correct = number_correct
+        self.time_created = time_created
 
 
 if __name__ == '__main__':

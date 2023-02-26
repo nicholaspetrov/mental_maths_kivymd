@@ -151,7 +151,7 @@ class SqliteManager(DatabaseManager):
         # finally:
         #     self.close_db_conn(conn)
 
-    def insert_test(self, test):
+    def insert_user_test(self, test):
         try:
             conn = self.get_db_connection()
             c = conn.cursor()

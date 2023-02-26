@@ -34,7 +34,7 @@ def test_insert_test():
         question_operator='/'
     )
     test.score = 100
-    new_test = dbm.insert_test(test)
+    new_test = dbm.insert_user_test(test)
     assert new_test.test_id > 0
 
 

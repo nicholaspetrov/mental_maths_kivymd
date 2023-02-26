@@ -28,5 +28,9 @@ class DatabaseManager(ABC):
         pass
 
     @abstractmethod
-    def insert_test(self, test):
+    def insert_user_test(self, test):
+        pass
+
+    @abstractmethod
+    def get_user_tests_for_operator(self, email, operator):
         pass
