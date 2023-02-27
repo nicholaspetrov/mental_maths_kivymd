@@ -110,4 +110,3 @@ class FirebaseManager(DatabaseManager):
             result.append(user_test)
             # print(f'{test.id} => {test.to_dict()}')
         return result
-

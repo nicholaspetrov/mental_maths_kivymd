@@ -207,6 +207,7 @@ AppLayout:
                     Quiz:
                     History:
                     Test_results:
+                    Leaderboard:
 
                     MDScreen:
                         id: start_test_screen
@@ -340,6 +341,11 @@ AppLayout:
                         MDNavigationDrawerItem:
                             icon: "chart-line"
                             text: "Stats"
+                            on_release: app.on_menu_click(self.text)
+
+                        MDNavigationDrawerItem:
+                            icon: "table-account"
+                            text: "Leaderboard"
                             on_release: app.on_menu_click(self.text)
 
                         MDNavigationDrawerItem:

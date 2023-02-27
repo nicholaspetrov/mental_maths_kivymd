@@ -1,3 +1,5 @@
+import re
+
 from loguru import logger
 from kivy.clock import Clock
 
@@ -7,6 +9,7 @@ from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import StringProperty
+from kivymd.uix.datatables import MDDataTable
 # from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 
 from back_end.db.firebase_manager import FirebaseManager
@@ -36,6 +39,7 @@ class MainApp(MDApp):
     active = True
     user = None
     user_name = StringProperty()
+    regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -49,6 +53,7 @@ class MainApp(MDApp):
         Builder.load_file('pages/quiz.kv')
         Builder.load_file('pages/history.kv')
         Builder.load_file('pages/test_results.kv')
+        Builder.load_file('pages/leaderboard.kv')
         self.screen = Builder.load_file('pages/main_app.kv')
 
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
@@ -166,12 +171,13 @@ class MainApp(MDApp):
         )
         self.dbm.insert_user_test(user_test)
 
-        test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=self.test_settings['Operator'])
-        x = []
-        y = []
+        test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator='+')
+        # x = []
+        # y = []
         for user_test in test_history:
-            x.append(user_test.time_created)
-            y.append(user_test.speed)
+            # x.append(user_test.time_created)
+            # y.append(user_test.speed)
+            print(user_test)
 
 
     def menu_callback(self, param_name, param_value):
@@ -323,6 +329,11 @@ class MainApp(MDApp):
             toast('Email required')
             return
 
+        if not re.fullmatch(self.regex, email.text):
+            toast('Invalid email')
+            self.root.ids.reg_email.text = ""
+            return
+
         if password.text == '' or confirm_password.text == '':
             toast('Password(s) required')
             return
@@ -420,6 +431,5 @@ TODO:
 - Enable update button once something has been changed in settings page
 - Animation for switching screens
 - Python can send emails
-- RegEx for email - correct form
 - https://stackoverflow.com/questions/44617793/image-size-on-kivy example of background picture
 '''
