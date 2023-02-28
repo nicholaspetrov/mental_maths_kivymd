@@ -10,7 +10,7 @@ from pathlib import Path
 from back_end.user import User
 from back_end.hashing import login
 from back_end.usertest import UserTest
-from back_end.utils import get_string_for_datetime
+from back_end.utils import get_string_for_datetime, get_datetime_for_string
 
 
 class FirebaseManager(DatabaseManager):
@@ -91,21 +91,25 @@ class FirebaseManager(DatabaseManager):
 
     def get_user_tests_for_operator(self, email, operator):
         user_ref = self.db.collection('users').document(email)
-        test_ref = self.db.collection('tests')
-        test_ref.where('user_id', '==', user_ref)
-        test_ref.where('question_operator', '==', operator)
-        tests = test_ref.stream()
+        test_ref = self.db.collection('tests').where(
+            'user_id', '==', user_ref
+        ).where(
+            'question_operator', '==', operator
+        ).order_by(
+            "timestamp"
+        ).stream()
+
         result = []
-        for test in tests:
+        for test in test_ref:
             user_test = UserTest(
-                user_id=test['user_id'],
-                question_operator=test['question_operator'],
-                duration=test['duration'],
-                difficulty=test['difficulty'],
+                user_id=test.get('user_id'),
+                question_operator=test.get('question_operator'),
+                duration=test.get('duration'),
+                difficulty=test.get('difficulty'),
             )
             user_test.set_test_results(
-                speed=test['speed'],
-                time_created=test['timestamp']
+                speed=test.get('speed'),
+                time_created=get_datetime_for_string(test.get('timestamp'))
             )
             result.append(user_test)
             # print(f'{test.id} => {test.to_dict()}')

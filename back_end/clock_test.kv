@@ -7,188 +7,70 @@
     right_action_items: [["logout", lambda x: app.exit_app()]]
 
 MDScreen:
-    id: start_test_screen
-    name: "Start test"
-
-    MyAppTopAppBar
+    id: leaderboard_screen
+    name: "Leaderboard"
 
     MDBoxLayout:
         padding: [10, 10, 10, 10]
-        size_hint_y: 0.89
-        spacing: 25
+        size_hint_y: 0.99
+#        spacing: 25
         orientation: "vertical"
-#        pos_hint: {"top": 1}
+
+        MDLabel:
+            text: 'Leaderboard'
+            halign: "center"
+            font_style: "H4"
+            size_hint_y: None
+
         MDGridLayout:
-            cols: 2
+            cols: 4
             spacing: 10
 
             MDCard:
-                orientation: 'vertical'
-                MDBoxLayout:
-                    padding: [10, 10, 10, 10]
-                    MDGridLayout:
-                        rows: 2
-                        MDLabel:
-                            text: 'Scoring'
-                            bold: True
-                        MDLabel:
-                            text: 'Easy, Medium, Hard questions answered correctly score 1, 2, 3 respectively and if answer is incorrect, Easy questions cost you 3, Medium 2 and so on'
-
-                MDBoxLayout:
-                    padding: [10, 10, 10, 10]
-                    MDGridLayout:
-                        rows: 2
-                        MDLabel:
-                            text: 'Timing'
-                            bold: True
-                        MDLabel:
-                            text: 'Once the timer at the top finishes, you will be automatically directed to the results page'
-
-                MDBoxLayout:
-                    padding: [10, 10, 10, 10]
-                    MDGridLayout:
-                        rows: 2
-                        MDLabel:
-                            text: 'Mixed'
-                            bold: True
-                        MDLabel:
-                            text: 'When Mixed is selected in the difficulty dropdown, you will be tested on a series of Easy, Medium and Hard questions on the selected operator'
-
-                MDBoxLayout:
-                    padding: [10, 10, 10, 10]
-                    MDGridLayout:
-                        rows: 2
-                        MDLabel:
-                            text: 'Skipping'
-                            bold: True
-                        MDLabel:
-                            text: "If you don't know the answer to the question, you can press enter without typing anything in the box to skip the question"
-
+                MDGridLayout:
+                    rows: 2
+#                    MDLabel:
+#                        text: 'Addition'
+#                        font_style: 'H6'
+#                        halign: 'center'
+                    MDDataTable:
+                        column_data: "Name", "Score"
+                        row_data: "Nick", "12"
+                        size_hint_x: 0.9
+                        size_hint_y: 0.6
+                    MDLabel:
+                        text: 'Table'
+                        halign: 'center'
 
             MDCard:
-                orientation: 'vertical'
-                spacing: 20
                 MDGridLayout:
-                    padding: [10, 10, 10, 10]
-                    rows: 5
+                    rows: 2
                     MDLabel:
-                        text: 'Test settings:'
+                        text: 'Subtraction'
                         font_style: 'H6'
-                        bold: True
-                    MDStackLayout:
-                        orientation: 'lr-tb'
-                        MDDropDownItem:
-                            id: difficulty_button
-                            text: "Difficulty"
-                            size_hint: 1/3, 0.1
-                            on_release: app.difficulty_menu.open()
-
-                        MDDropDownItem:
-                            id: operator_button
-                            text: "Operator"
-                            size_hint: 1/3, 0.1
-                            on_release: app.operator_menu.open()
-
-                        MDDropDownItem:
-                            id: duration_button
-                            text: "Duration"
-                            size_hint: 1/3, 0.1
-                            on_release: app.duration_menu.open()
+                        halign: 'center'
                     MDLabel:
-                        text: ''
+                        text: 'Table'
+                        halign: 'center'
+
+            MDCard:
+                MDGridLayout:
+                    rows: 2
                     MDLabel:
-                        text: ''
+                        text: 'Multiplication'
+                        font_style: 'H6'
+                        halign: 'center'
                     MDLabel:
-                        text: ''
+                        text: 'Table'
+                        halign: 'center'
 
-        MDRaisedButton:
-            pos_hint: {"center_x": .5}
-            text: "Start test"
-            size_hint: None, None
-            size: 20, 300
-
-            on_release:
-                app.start_new_test()
-
-#            MDDropDownItem:
-#                id: difficulty_button
-#                text: "Difficulty"
-#                size_hint: 1/3, 0.1
-#                on_release: app.difficulty_menu.open()
-#
-#            MDDropDownItem:
-#                id: operator_button
-#                text: "Operator"
-#                size_hint: 1/3, 0.1
-#                on_release: app.operator_menu.open()
-#
-#            MDDropDownItem:
-#                id: duration_button
-#                text: "Duration"
-#                size_hint: 1/3, 0.1
-#                on_release: app.duration_menu.open()
-#
-#        MDGridLayout:
-#            spacing: 10
-#            cols: 2
-#            MDCard:
-#                orientation: 'vertical'
-#                MDGridLayout:
-#                    rows: 2
-#                    MDLabel:
-#                        text: 'Scoring:'
-#                        font_style: 'Subtitle1'
-#                        bold: True
-#                        padding_x: 25
-#                    MDLabel:
-#                        text: 'Easy scores 1, Medium scores 2 and Hard scores 3 when answered correctly'
-#                        font_style: 'Body2'
-#                        padding_x: 25
-#
-#            MDCard:
-#                orientation: 'vertical'
-#                MDLabel:
-#                    text: 'Timer:'
-#                    font_style: 'Subtitle1'
-#                    bold: True
-#                    padding_x: 25
-#
-#                MDLabel:
-#                    text: 'Text'
-#                    font_style: 'Body2'
-#                    padding_x: 25
-#
-#            MDCard:
-#                orientation: 'vertical'
-#                MDLabel:
-#                    text: 'Mixed:'
-#                    font_style: 'Subtitle1'
-#                    bold: True
-#                    padding_x: 25
-#
-#                MDLabel:
-#                    text: 'Text'
-#                    font_style: 'Body2'
-#                    padding_x: 25
-#
-#            MDCard:
-#                orientation: 'vertical'
-#                MDLabel:
-#                    text: 'Skip and valid inputs:'
-#                    font_style: 'Subtitle1'
-#                    bold: True
-#                    padding_x: 25
-#
-#                MDLabel:
-#                    text: 'Text'
-#                    font_style: 'Body2'
-#                    padding_x: 25
-#
-#        MDRaisedButton:
-#            pos_hint: {"center_x": .5}
-#            text: "Start test"
-#            size_hint: None, None
-#            size: 20, 300
-#
-#            on_release:
-#                app.start_new_test()
+            MDCard:
+                MDGridLayout:
+                    rows: 2
+                    MDLabel:
+                        text: 'Division'
+                        font_style: 'H6'
+                        halign: 'center'
+                    MDLabel:
+                        text: 'Table'
+                        halign: 'center'

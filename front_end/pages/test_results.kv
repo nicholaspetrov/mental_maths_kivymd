@@ -20,39 +20,57 @@
             MDGridLayout:
                 size_hint_y: None
                 cols: 2
-                MDLabel:
-                    # Difficulty label
-                    padding_x: 50
-                    text: 'Difficulty: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    # Difficulty label with actual value retrieved using id: difficulty_label
-                    id: difficulty_label
-                    padding_x: 50
-                    text: ''
-                    font_style: "Subtitle1"
+                MDGridLayout:
+                    cols: 2
+                    MDLabel:
+                        # Difficulty label
+                        padding_x: 50
+                        text: 'Difficulty: '
+                        font_style: "Subtitle1"
+                    MDLabel:
+                        # Difficulty label with actual value retrieved using id: difficulty_label
+                        id: difficulty_label
+                        padding_x: 50
+                        text: ''
+                        font_style: "Subtitle1"
 
-                MDLabel:
-                    # Same as above
-                    padding_x: 50
-                    text: 'Operator: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    id: operator_label
-                    padding_x: 50
-                    text: ''
-                    font_style: "Subtitle1"
+                    MDLabel:
+                        # Same as above
+                        padding_x: 50
+                        text: 'Operator: '
+                        font_style: "Subtitle1"
+                    MDLabel:
+                        id: operator_label
+                        padding_x: 50
+                        text: ''
+                        font_style: "Subtitle1"
 
-                MDLabel:
-                    # Same as above
-                    padding_x: 50
-                    text: 'Duration: '
-                    font_style: "Subtitle1"
-                MDLabel:
-                    id: duration_label
-                    padding_x: 50
-                    text: ''
-                    font_style: "Subtitle1"
+                    MDLabel:
+                        # Same as above
+                        padding_x: 50
+                        text: 'Duration: '
+                        font_style: "Subtitle1"
+                    MDLabel:
+                        id: duration_label
+                        padding_x: 50
+                        text: ''
+                        font_style: "Subtitle1"
+
+                MDBoxLayout:
+                    size_hint: 0.3, 0.75
+                    padding: [10, 10, 10, 10]
+                    orientation: 'vertical'
+                    spacing: 10
+                    MDRaisedButton:
+                        text: " New test "
+                        font_style: "Subtitle1"
+                        pos_hint: {"center_x": 0.7}
+                        on_release: app.on_menu_click("Start test")
+                    MDRaisedButton:
+                        text: "Retry test"
+                        font_style: "Subtitle1"
+                        pos_hint: {"center_x": 0.7}
+                        on_release: app.start_new_test()
 
         MDCard:
             # Middle card
@@ -100,30 +118,27 @@
                     font_style: "Subtitle1"
 
         MDCard:
+            orientation: 'vertical'
             # Bottom card
             id: graph_card
-            orientation: 'vertical'
-            MDLabel:
-                text: 'Graphs/Charts'
-                font_style: 'H6'
-                padding_x: 25
-            MDLabel:
-                text: 'Graphs to be added'
-                halign: 'center'
+#            MDLabel:
+#                text: 'Graphs/Charts'
+#                font_style: 'H6'
+#                padding_x: 25
 
         # New test and retry test buttons placed in bottom right part of page outside of cards
-        MDStackLayout:
-            # Elements in StackLayout stacked from right-to-left and bottom-top (i.e. buttons located at bottom right)
-            orientation: 'rl-bt'
-            spacing: 10
-            padding: 10
-            MDRaisedButton:
-                text: "New test"
-                font_style: "Subtitle1"
-                pos_hint: {"center_x": 0.7, "center_y": .15}
-                on_release: app.on_menu_click("Start test")
-            MDRaisedButton:
-                text: "Retry test"
-                font_style: "Subtitle1"
-                pos_hint: {"center_x": 0.3, "center_y": .15}
-                on_release: app.start_new_test()
+#        MDStackLayout:
+#            # Elements in StackLayout stacked from right-to-left and bottom-top (i.e. buttons located at bottom right)
+#            orientation: 'rl-bt'
+#            spacing: 10
+#            padding: 10
+#            MDRaisedButton:
+#                text: "New test"
+#                font_style: "Subtitle1"
+#                pos_hint: {"center_x": 0.7, "center_y": 0}
+#                on_release: app.on_menu_click("Start test")
+#            MDRaisedButton:
+#                text: "Retry test"
+#                font_style: "Subtitle1"
+#                pos_hint: {"center_x": 0.5}
+#                on_release: app.start_new_test()

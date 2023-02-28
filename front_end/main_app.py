@@ -9,8 +9,7 @@ from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import StringProperty
-from kivymd.uix.datatables import MDDataTable
-# from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+from kivy_garden.graph import Graph, SmoothLinePlot, MeshLinePlot
 
 from back_end.db.firebase_manager import FirebaseManager
 # from back_end.database_manager import create_password_table
@@ -53,7 +52,6 @@ class MainApp(MDApp):
         Builder.load_file('pages/quiz.kv')
         Builder.load_file('pages/history.kv')
         Builder.load_file('pages/test_results.kv')
-        Builder.load_file('pages/leaderboard.kv')
         self.screen = Builder.load_file('pages/main_app.kv')
 
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
@@ -141,7 +139,7 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[6].ids.difficulty_label.text = self.test_settings['Difficulty']
         self.root.ids.app_screen_manager.screens[6].ids.operator_label.text = self.test_settings['Operator']
         self.root.ids.app_screen_manager.screens[6].ids.duration_label.text = f'{time} min'
-        speed = round(number_of_seconds / self.user_test.score, 2)
+        speed = round(self.user_test.score / number_of_seconds, 2)
 
         if questions_answered == 0:
             self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
@@ -154,7 +152,7 @@ class MainApp(MDApp):
             else:
                 self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
                 self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
-                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(speed)} seconds per point'
+                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(speed)} points per second'
 
         user_test = UserTest(
             user_id=self.user.email,
@@ -171,14 +169,36 @@ class MainApp(MDApp):
         )
         self.dbm.insert_user_test(user_test)
 
-        test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator='+')
-        # x = []
-        # y = []
-        for user_test in test_history:
-            # x.append(user_test.time_created)
-            # y.append(user_test.speed)
-            print(user_test)
+        test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=self.test_settings['Operator'])
 
+        # x = [user_test.time_created for user_test in test_history]
+        x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        y = [user_test.speed for user_test in test_history]
+        max_y = max(y)
+        max_x = max(x)
+        graph = Graph(
+            xlabel="Date",
+            ylabel="Average speed",
+            x_ticks_minor=5,
+            x_ticks_major=25,
+            y_ticks_major=0.5,
+            y_grid_label=True,
+            x_grid_label=True,
+            padding=5,
+            x_grid=True,
+            y_grid=True,
+            xmin=0,
+            xmax=max_x,
+            ymin=0,
+            ymax=max_y+0.5,
+            label_options={"color": [.5, .5, .5, 1], "bold": True},
+            # ylog=True,
+            # y_ticks_minor=
+        )
+        plot = MeshLinePlot(color=[1, 0, 0, 1])
+        plot.points = list(zip(x, y))
+        graph.add_plot(plot)
+        self.root.ids.app_screen_manager.screens[6].ids.graph_card.add_widget(graph)
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':
@@ -228,10 +248,12 @@ class MainApp(MDApp):
             self.root.ids.app_screen_manager.screens[4].ids.question_label.bold = True
             # Sets the duration of the horizontal timer progress bar on top of screen based on what was inputted in the
             # prior test construction page
-            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            # self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = 5
             # Timer + progress bar started
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
-            Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+            # Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+            Clock.schedule_once(self.stop_user_test, 5)
 
         # Values for points gained or lost after answering the question correctly or incorrectly stored - later used for
         # displaying green and red progress bars
