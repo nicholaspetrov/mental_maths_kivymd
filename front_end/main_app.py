@@ -1,5 +1,7 @@
 import re
 
+from kivy.metrics import dp
+from kivymd.uix.datatables import MDDataTable
 from loguru import logger
 from kivy.clock import Clock
 
@@ -323,13 +325,24 @@ class MainApp(MDApp):
             self.root.ids.app_screen_manager.current = "Quiz"
             self.root.ids.app_screen_manager.transition.direction = "right"
 
-    def update_addition_leaderboard(self):
+    def update_leaderboard(self):
         addition_leaderboard = self.dbm.get_addition_leaderboard(operator='+')
         subtraction_leaderboard = self.dbm.get_subtraction_leaderboard(operator='-')
         division_leaderboard = self.dbm.get_division_leaderboard(operator='/')
         multiplication_leaderboard = self.dbm.get_multiplication_leaderboard(operator='*')
 
-        run_merge(addition_leaderboard)
+        print(run_merge(addition_leaderboard))
+        addition_table = MDDataTable(
+            column_data=[
+                ("Rank", dp(10)),
+                ("Name", dp(30)),
+                ("Speed", dp(15))
+            ],
+            row_data=run_merge(addition_leaderboard)
+        )
+
+        self.root.ids.app_screen_manager.screens[7].ids.addition_table.add_widget(addition_table)
+
         run_merge(subtraction_leaderboard)
         run_merge(division_leaderboard)
         run_merge(multiplication_leaderboard)
@@ -380,22 +393,6 @@ class MainApp(MDApp):
         if len(password.text) < 6:
             # No toast since message (passwords length less than 6) is already displayed under textfield dynamically
             return
-
-        # result = authenticator.signup(email=email.text, password=password.text, name=name.text)
-        # if result is not None:
-        #     # User has successfully logged in
-        #     self.user = User(
-        #         name=name.text,
-        #         email=email.text,
-        #         user_id=result['localId']
-        #     )
-        #     self.root.ids.login_screen_manager.current = "Application"
-        #     self.root.ids.app_screen_manager.transition.direction = "left"
-        #     self.user_name = self.user.name
-        #     self.clear_register_fields()
-        # else:
-        #     # Checks if inputted email has already been used to register
-        #     toast("Account already registered under email")
 
         user = self.dbm.insert_user(name.text, email.text, password.text)
         # Password fed into hashing algorithm
@@ -468,5 +465,4 @@ TODO:
 - Python can send emails
 - https://stackoverflow.com/questions/44617793/image-size-on-kivy example of background picture
 - Sort out graph - reset card everytime user goes to results page
-- Deal with repeats of speed in same operator (choose higher speed of user in operator)
 '''

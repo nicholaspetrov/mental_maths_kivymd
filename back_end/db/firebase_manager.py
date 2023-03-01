@@ -72,6 +72,13 @@ class FirebaseManager(DatabaseManager):
         logger.info(f'Incorrect password for: {email}')
         return None
 
+    # def check_password(self, password):
+    #     user_ref = self.db.collection('users').document(email)
+    #     user = user_ref.get()
+    #     fields = user.to_dict()
+    #     salt = fields['salt']
+    #     hashed_pwd = fields['hash']
+
     def insert_user_test(self, user_test: UserTest):
         user_ref = self.db.collection('users').document(user_test.user_id)
         user_test = self.db.collection('tests').document().set({
@@ -119,26 +126,58 @@ class FirebaseManager(DatabaseManager):
         test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
         addition_leaderboard = {}
         for test in test_ref:
-            addition_leaderboard[test.get('user_id')] = test.get('speed')
+            email = test.get('user_id').id
+            speed = test.get('speed')
+            if email in addition_leaderboard:
+                if speed > addition_leaderboard[email]:
+                    addition_leaderboard.update({email: speed})
+                else:
+                    pass
+            else:
+                addition_leaderboard[email] = speed
         return addition_leaderboard
 
     def get_subtraction_leaderboard(self, operator):
         test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
         subtraction_leaderboard = {}
         for test in test_ref:
-            subtraction_leaderboard[test.get('user_id')] = test.get('speed')
+            email = test.get('user_id').id
+            speed = test.get('speed')
+            if email in subtraction_leaderboard:
+                if speed > subtraction_leaderboard[email]:
+                    subtraction_leaderboard.update({email: speed})
+                else:
+                    pass
+            else:
+                subtraction_leaderboard[test.get('user_id').id] = test.get('speed')
         return subtraction_leaderboard
 
     def get_division_leaderboard(self, operator):
         test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
         division_leaderboard = {}
         for test in test_ref:
-            division_leaderboard[test.get('user_id')] = test.get('speed')
+            email = test.get('user_id').id
+            speed = test.get('speed')
+            if email in division_leaderboard:
+                if speed > division_leaderboard[email]:
+                    division_leaderboard.update({email: speed})
+                else:
+                    pass
+            else:
+                division_leaderboard[email] = speed
         return division_leaderboard
 
     def get_multiplication_leaderboard(self, operator):
         test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
         multiplication_leaderboard = {}
         for test in test_ref:
-            multiplication_leaderboard[test.get('user_id')] = test.get('speed')
+            email = test.get('user_id').id
+            speed = test.get('speed')
+            if email in multiplication_leaderboard:
+                if speed > multiplication_leaderboard[email]:
+                    multiplication_leaderboard.update({email: speed})
+                else:
+                    pass
+            else:
+                multiplication_leaderboard[email] = speed
         return multiplication_leaderboard

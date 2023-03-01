@@ -57,9 +57,9 @@ def run_merge(records):
     rows = []
     rank = 1
     for i in range(len(final_score)):
-        rows.append((rank, final_score[i], final_leaderboard[i]))
+        rows.append((rank, final_leaderboard[i], final_score[i]))
         rank += 1
-    print(rows)
+    return rows
 
 
 # run_merge({"Tristan": 4.6, "Nick": 2.5, "Andrej": 6.7, "Nathan": 3.2, "Henry": 5})
