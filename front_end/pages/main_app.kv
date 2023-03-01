@@ -207,7 +207,7 @@ AppLayout:
                     Quiz:
                     History:
                     Test_results:
-#                    Leaderboard:
+                    Leaderboard:
 
                     MDScreen:
                         id: start_test_screen
@@ -344,9 +344,11 @@ AppLayout:
                             on_release: app.on_menu_click(self.text)
 
                         MDNavigationDrawerItem:
-                            icon: "table-account"
+                            icon: "trophy"
                             text: "Leaderboard"
-                            on_release: app.on_menu_click(self.text)
+                            on_release:
+                                app.on_menu_click(self.text)
+                                app.update_addition_leaderboard()
 
                         MDNavigationDrawerItem:
                             icon: "account-cog"

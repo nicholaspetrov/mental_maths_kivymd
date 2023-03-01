@@ -1,77 +1,64 @@
-#<Leaderboard@MDScreen>:
-#    id: leaderboard_screen
-#    name: "Leaderboard"
-#
-##    MDBoxLayout:
-##
-##        MDLabel:
-##            text: 'Leaderboard'
-##            halign: "center"
-##            font_style: "H4"
-##            size_hint_y: None
-#
-#    MDBoxLayout:
-#        padding: [10, 10, 10, 10]
-#        size_hint_y: 0.90
-##        spacing: 25
-#        orientation: "vertical"
-#
-#        MDLabel:
-#            text: 'Leaderboard'
-#            halign: "center"
-#            font_style: "H4"
-#            size_hint_y: None
-#
-#        MDGridLayout:
-#            cols: 4
-#            spacing: 10
-#
-#            MDCard:
-#                MDGridLayout:
-#                    rows: 2
-#                    MDLabel:
-#                        text: 'Addition'
-#                        font_style: 'H6'
-#                        halign: 'center'
-##                    MDDataTable:
-##                        column_data: "Name", "Score"
-##                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-##                        size_hint_x: 0.9
-##                        size_hint_y: 0.6
-#                    MDLabel:
-#                        text: 'Table'
-#                        halign: 'center'
-#
-#            MDCard:
-#                MDGridLayout:
-#                    rows: 2
-#                    MDLabel:
-#                        text: 'Subtraction'
-#                        font_style: 'H6'
-#                        halign: 'center'
-#                    MDLabel:
-#                        text: 'Table'
-#                        halign: 'center'
-#
-#            MDCard:
-#                MDGridLayout:
-#                    rows: 2
-#                    MDLabel:
-#                        text: 'Multiplication'
-#                        font_style: 'H6'
-#                        halign: 'center'
-#                    MDLabel:
-#                        text: 'Table'
-#                        halign: 'center'
-#
-#            MDCard:
-#                MDGridLayout:
-#                    rows: 2
-#                    MDLabel:
-#                        text: 'Division'
-#                        font_style: 'H6'
-#                        halign: 'center'
-#                    MDLabel:
-#                        text: 'Table'
-#                        halign: 'center'
+<Leaderboard@MDScreen>:
+    id: leaderboard_screen
+    name: "Leaderboard"
+
+    MDBoxLayout:
+        padding: [10, 10, 10, 10]
+        size_hint_y: 0.90
+#        spacing: 25
+        orientation: "vertical"
+
+        MDLabel:
+            text: 'Leaderboard'
+            halign: "center"
+            font_style: "H4"
+            size_hint_y: None
+
+        MDGridLayout:
+            cols: 4
+            spacing: 10
+
+            MDCard:
+                MDGridLayout:
+                    rows: 2
+                    MDLabel:
+                        text: 'Addition'
+                        font_style: 'H6'
+                        halign: 'center'
+                    MDLabel:
+                        text: 'Table'
+                        halign: 'center'
+
+            MDCard:
+                MDGridLayout:
+                    rows: 2
+                    MDLabel:
+                        text: 'Subtraction'
+                        font_style: 'H6'
+                        halign: 'center'
+                    MDLabel:
+                        text: 'Table'
+                        halign: 'center'
+
+            MDCard:
+                MDGridLayout:
+                    rows: 2
+                    MDLabel:
+                        text: 'Multiplication'
+                        font_style: 'H6'
+                        halign: 'center'
+                    MDLabel:
+                        text: 'Table'
+                        halign: 'center'
+
+            MDCard:
+                MDGridLayout:
+                    rows: 2
+                    MDLabel:
+                        text: 'Division'
+                        font_style: 'H6'
+                        halign: 'center'
+                    MDLabel:
+                        text: 'Table'
+                        halign: 'center'
 

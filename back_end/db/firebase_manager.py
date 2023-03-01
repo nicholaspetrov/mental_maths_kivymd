@@ -114,3 +114,31 @@ class FirebaseManager(DatabaseManager):
             result.append(user_test)
             # print(f'{test.id} => {test.to_dict()}')
         return result
+
+    def get_addition_leaderboard(self, operator):
+        test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
+        addition_leaderboard = {}
+        for test in test_ref:
+            addition_leaderboard[test.get('user_id')] = test.get('speed')
+        return addition_leaderboard
+
+    def get_subtraction_leaderboard(self, operator):
+        test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
+        subtraction_leaderboard = {}
+        for test in test_ref:
+            subtraction_leaderboard[test.get('user_id')] = test.get('speed')
+        return subtraction_leaderboard
+
+    def get_division_leaderboard(self, operator):
+        test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
+        division_leaderboard = {}
+        for test in test_ref:
+            division_leaderboard[test.get('user_id')] = test.get('speed')
+        return division_leaderboard
+
+    def get_multiplication_leaderboard(self, operator):
+        test_ref = self.db.collection('tests').where('question_operator', '==', operator).stream()
+        multiplication_leaderboard = {}
+        for test in test_ref:
+            multiplication_leaderboard[test.get('user_id')] = test.get('speed')
+        return multiplication_leaderboard

@@ -12,6 +12,7 @@ from kivy.properties import StringProperty
 from kivy_garden.graph import Graph, SmoothLinePlot, MeshLinePlot
 
 from back_end.db.firebase_manager import FirebaseManager
+from back_end.merge_sort import run_merge
 # from back_end.database_manager import create_password_table
 # from back_end.database_manager import insert_into_password_table
 # from back_end.database_manager import check_login
@@ -52,6 +53,7 @@ class MainApp(MDApp):
         Builder.load_file('pages/quiz.kv')
         Builder.load_file('pages/history.kv')
         Builder.load_file('pages/test_results.kv')
+        Builder.load_file('pages/leaderboard.kv')
         self.screen = Builder.load_file('pages/main_app.kv')
 
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
@@ -248,12 +250,12 @@ class MainApp(MDApp):
             self.root.ids.app_screen_manager.screens[4].ids.question_label.bold = True
             # Sets the duration of the horizontal timer progress bar on top of screen based on what was inputted in the
             # prior test construction page
-            # self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
-            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = 5
+            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            # self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = 5
             # Timer + progress bar started
             self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
-            # Clock.schedule_once(self.stop_user_test, self.user_test.duration)
-            Clock.schedule_once(self.stop_user_test, 5)
+            Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+            # Clock.schedule_once(self.stop_user_test, 5)
 
         # Values for points gained or lost after answering the question correctly or incorrectly stored - later used for
         # displaying green and red progress bars
@@ -320,6 +322,17 @@ class MainApp(MDApp):
             # Directs user to actual quiz page
             self.root.ids.app_screen_manager.current = "Quiz"
             self.root.ids.app_screen_manager.transition.direction = "right"
+
+    def update_addition_leaderboard(self):
+        addition_leaderboard = self.dbm.get_addition_leaderboard(operator='+')
+        subtraction_leaderboard = self.dbm.get_subtraction_leaderboard(operator='-')
+        division_leaderboard = self.dbm.get_division_leaderboard(operator='/')
+        multiplication_leaderboard = self.dbm.get_multiplication_leaderboard(operator='*')
+
+        run_merge(addition_leaderboard)
+        run_merge(subtraction_leaderboard)
+        run_merge(division_leaderboard)
+        run_merge(multiplication_leaderboard)
 
     def on_menu_click(self, item_name):
         # When item in menu clicked, menu closes
@@ -454,4 +467,6 @@ TODO:
 - Animation for switching screens
 - Python can send emails
 - https://stackoverflow.com/questions/44617793/image-size-on-kivy example of background picture
+- Sort out graph - reset card everytime user goes to results page
+- Deal with repeats of speed in same operator (choose higher speed of user in operator)
 '''
