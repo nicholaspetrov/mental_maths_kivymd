@@ -16,10 +16,10 @@ dependencies:
   - navigator-updater
   - kivy
   - faker
+  - matplotlib
   - pip:
       - kivymd==1.0.2
       - pyrebase
       - firebase_admin
       - kivy_garden
-      - kivy_garden.graph
 prefix: C:\Users\nicho\anaconda3

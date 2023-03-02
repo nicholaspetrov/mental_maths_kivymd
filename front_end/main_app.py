@@ -1,6 +1,6 @@
 import re
 
-from kivy.metrics import dp
+from kivy.metrics import dp, sp
 from kivymd.uix.datatables import MDDataTable
 from loguru import logger
 from kivy.clock import Clock
@@ -12,7 +12,13 @@ from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import StringProperty
 from kivy_garden.graph import Graph, SmoothLinePlot, MeshLinePlot
+from kivy_garden.graph import Graph, SmoothLinePlot, MeshLinePlot
+from math import sin
+from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
 
+from back_end import utils
 from back_end.db.firebase_manager import FirebaseManager
 from back_end.merge_sort import run_merge
 # from back_end.database_manager import create_password_table
@@ -53,9 +59,9 @@ class MainApp(MDApp):
         Builder.load_file('pages/stats.kv')
         Builder.load_file('pages/about.kv')
         Builder.load_file('pages/quiz.kv')
-        Builder.load_file('pages/history.kv')
+        # Builder.load_file('pages/history.kv')
         Builder.load_file('pages/test_results.kv')
-        Builder.load_file('pages/leaderboard.kv')
+        # Builder.load_file('pages/leaderboard.kv')
         self.screen = Builder.load_file('pages/main_app.kv')
 
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
@@ -107,13 +113,13 @@ class MainApp(MDApp):
         )
 
     def reset_test_page(self):
-        self.root.ids.app_screen_manager.screens[4].ids.question_label.text = "Click 'Next question' to start"
-        self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H4'
-        self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
-        self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = 0
-        self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = 0
-        self.root.ids.app_screen_manager.screens[4].ids.question_label.bold = False
-        self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.stop()
+        self.root.ids.app_screen_manager.screens[3].ids.question_label.text = "Click 'Next question' to start"
+        self.root.ids.app_screen_manager.screens[3].ids.question_label.font_style = 'H4'
+        self.root.ids.app_screen_manager.screens[3].ids.answer_input.text = ''
+        self.root.ids.app_screen_manager.screens[3].ids.correct_progress_bar.value = 0
+        self.root.ids.app_screen_manager.screens[3].ids.incorrect_progress_bar.value = 0
+        self.root.ids.app_screen_manager.screens[3].ids.question_label.bold = False
+        self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.stop()
 
     def stop_user_test(self, dt):
         self.reset_test_page()
@@ -140,23 +146,25 @@ class MainApp(MDApp):
         number_of_seconds = int(self.test_settings['Duration'])
         # https://stackoverflow.com/questions/13097099/how-to-make-python-print-1-as-opposed-to-1-0
 
-        self.root.ids.app_screen_manager.screens[6].ids.difficulty_label.text = self.test_settings['Difficulty']
-        self.root.ids.app_screen_manager.screens[6].ids.operator_label.text = self.test_settings['Operator']
-        self.root.ids.app_screen_manager.screens[6].ids.duration_label.text = f'{time} min'
-        speed = round(self.user_test.score / number_of_seconds, 2)
+        self.root.ids.app_screen_manager.screens[4].ids.difficulty_label.text = self.test_settings['Difficulty']
+        self.root.ids.app_screen_manager.screens[4].ids.operator_label.text = self.test_settings['Operator']
+        self.root.ids.app_screen_manager.screens[4].ids.duration_label.text = f'{time} min'
+        speed = round((self.user_test.score / number_of_seconds) * 60, 2)
 
         if questions_answered == 0:
-            self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
-            self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = '0'
+            self.root.ids.app_screen_manager.screens[4].ids.correct_answers_label.text = '0'
+            self.root.ids.app_screen_manager.screens[4].ids.speed_label.text = '0'
         else:
             if self.user_test.score < 0 or self.user_test.score == 0:
-                self.root.ids.app_screen_manager.screens[6].ids.score_label.text = '0'
-                self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = '0'
-                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = '0'
+                self.user_test.score = 0
+                speed = 0
+                self.root.ids.app_screen_manager.screens[4].ids.score_label.text = '0'
+                self.root.ids.app_screen_manager.screens[4].ids.correct_answers_label.text = '0'
+                self.root.ids.app_screen_manager.screens[4].ids.speed_label.text = '0'
             else:
-                self.root.ids.app_screen_manager.screens[6].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
-                self.root.ids.app_screen_manager.screens[6].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
-                self.root.ids.app_screen_manager.screens[6].ids.speed_label.text = f'{str(speed)} points per second'
+                self.root.ids.app_screen_manager.screens[4].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
+                self.root.ids.app_screen_manager.screens[4].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
+                self.root.ids.app_screen_manager.screens[4].ids.speed_label.text = f'{str(speed)} points per minute'
 
         user_test = UserTest(
             user_id=self.user.email,
@@ -174,35 +182,18 @@ class MainApp(MDApp):
         self.dbm.insert_user_test(user_test)
 
         test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=self.test_settings['Operator'])
-
-        # x = [user_test.time_created for user_test in test_history]
-        x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        x = [utils.get_date_string_for_datetime(user_test.time_created) for user_test in test_history]
         y = [user_test.speed for user_test in test_history]
-        max_y = max(y)
-        max_x = max(x)
-        graph = Graph(
-            xlabel="Date",
-            ylabel="Average speed",
-            x_ticks_minor=5,
-            x_ticks_major=25,
-            y_ticks_major=0.5,
-            y_grid_label=True,
-            x_grid_label=True,
-            padding=5,
-            x_grid=True,
-            y_grid=True,
-            xmin=0,
-            xmax=max_x,
-            ymin=0,
-            ymax=max_y+0.5,
-            label_options={"color": [.5, .5, .5, 1], "bold": True},
-            # ylog=True,
-            # y_ticks_minor=
-        )
-        plot = MeshLinePlot(color=[1, 0, 0, 1])
-        plot.points = list(zip(x, y))
-        graph.add_plot(plot)
-        self.root.ids.app_screen_manager.screens[6].ids.graph_card.add_widget(graph)
+
+        fix, ax = plt.subplots()
+        ax.bar(x, y)
+        plt.ylabel('Points per minute')
+        plt.xticks(rotation=20, ha="right")
+        plt.xlabel("Date", labelpad=40)
+        # plt.tight_layout()
+        self.root.ids.app_screen_manager.screens[4].ids.graph_card.add_widget(FigureCanvasKivyAgg(plt.gcf()))
+
+        self.update_leaderboard()
 
     def menu_callback(self, param_name, param_value):
         if param_name == 'Duration':
@@ -228,14 +219,14 @@ class MainApp(MDApp):
         self.root.ids.nav_drawer.set_state("open")
 
     def refocus_ti(self, *args):
-        self.root.ids.app_screen_manager.screens[4].ids.answer_input.focus = True
+        self.root.ids.app_screen_manager.screens[3].ids.answer_input.focus = True
 
     def get_next_question(self):
         # User now able to type answer into text box
-        self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = False
+        self.root.ids.app_screen_manager.screens[3].ids.answer_input.disabled = False
         if len(self.user_test.questions) > 0:
             # If this isn't the first question asked
-            answer = self.root.ids.app_screen_manager.screens[4].ids.answer_input.text
+            answer = self.root.ids.app_screen_manager.screens[3].ids.answer_input.text
             # Answer retrieved from text box
             if answer.lstrip("-").isdigit() or answer == '':
                 # Validates answer input - prevents strings of letters from being inputted whilst allowing negative sign
@@ -244,31 +235,31 @@ class MainApp(MDApp):
                 self.user_test.check_answer(int(answer) if len(answer) > 0 else 0)
             else:
                 toast('Invalid answer')
-                self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
+                self.root.ids.app_screen_manager.screens[3].ids.answer_input.text = ''
                 return
         else:
             # Label that displays question now made bold and increases in size
-            self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H3'
-            self.root.ids.app_screen_manager.screens[4].ids.question_label.bold = True
+            self.root.ids.app_screen_manager.screens[3].ids.question_label.font_style = 'H3'
+            self.root.ids.app_screen_manager.screens[3].ids.question_label.bold = True
             # Sets the duration of the horizontal timer progress bar on top of screen based on what was inputted in the
             # prior test construction page
-            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
-            # self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.running_duration = 5
+            # self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = 5
             # Timer + progress bar started
-            self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.start()
-            Clock.schedule_once(self.stop_user_test, self.user_test.duration)
-            # Clock.schedule_once(self.stop_user_test, 5)
+            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.start()
+            # Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+            Clock.schedule_once(self.stop_user_test, 5)
 
         # Values for points gained or lost after answering the question correctly or incorrectly stored - later used for
         # displaying green and red progress bars
-        current_correct = self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value
-        current_incorrect = self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value
+        current_correct = self.root.ids.app_screen_manager.screens[3].ids.correct_progress_bar.value
+        current_incorrect = self.root.ids.app_screen_manager.screens[3].ids.incorrect_progress_bar.value
         if len(self.user_test.questions) > 0:
             if self.user_test.user_results[-1][1] > 0:
                 # If points scored are positive, then question has been answered correctly (back in class UserTest)
                 current_correct += self.user_test.user_results[-1][1]
                 # Green progress bar increases accordingly by how many points was just gained
-                self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = current_correct
+                self.root.ids.app_screen_manager.screens[3].ids.correct_progress_bar.value = current_correct
             else:
                 if self.user_test.user_results[-1][1] == 0:
                     # If nothing was inputted (i.e. User has skipped question) - no points lost or gained
@@ -276,33 +267,39 @@ class MainApp(MDApp):
                 else:
                     # Red progress bar increases accordingly by how many points was just lost
                     current_incorrect += -(self.user_test.user_results[-1][1])
-                    self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = current_incorrect
+                    self.root.ids.app_screen_manager.screens[3].ids.incorrect_progress_bar.value = current_incorrect
         else:
             pass
 
         # If either progress bar fills completely, progress bar resets
         if current_correct >= 100:
-            self.root.ids.app_screen_manager.screens[4].ids.correct_progress_bar.value = 0
+            self.root.ids.app_screen_manager.screens[3].ids.correct_progress_bar.value = 0
         if current_incorrect >= 100:
-            self.root.ids.app_screen_manager.screens[4].ids.incorrect_progress_bar.value = 0
+            self.root.ids.app_screen_manager.screens[3].ids.incorrect_progress_bar.value = 0
 
         # After user submitted answer, text in input box emptied
-        self.root.ids.app_screen_manager.screens[4].ids.answer_input.text = ''
+        self.root.ids.app_screen_manager.screens[3].ids.answer_input.text = ''
         # Next question retrieved using same very method
         question = self.user_test.get_next_question()
         # Keeps focus on enter button - User essentially never has to use the mouse (just type answer and enter, then repeat)
         Clock.schedule_once(self.refocus_ti)
         logger.debug(f'Generating next question: {question}')
         # Tuple (question) replaces the "Click 'Next question' to start" in visually appealing format
-        self.root.ids.app_screen_manager.screens[4].ids.question_label.text = ' '.join(map(str, question))
+        self.root.ids.app_screen_manager.screens[3].ids.question_label.text = ' '.join(map(str, question))
+
+    def clear_leaderboards(self):
+        self.root.ids.app_screen_manager.screens[0].ids.addition_table.clear_widgets()
+        self.root.ids.app_screen_manager.screens[0].ids.subtraction_table.clear_widgets()
+        self.root.ids.app_screen_manager.screens[0].ids.division_table.clear_widgets()
+        self.root.ids.app_screen_manager.screens[0].ids.multiplication_table.clear_widgets()
 
     def start_new_test(self):
         toast('Good luck!')
         self.reset_test_page()
-        self.root.ids.app_screen_manager.screens[4].ids.answer_input.disabled = True
+        self.root.ids.app_screen_manager.screens[3].ids.answer_input.disabled = True
         # Prevents user from typing into enter box - enabled once test has officially started
-        self.root.ids.app_screen_manager.screens[4].ids.question_label.font_style = 'H4'
-        self.root.ids.app_screen_manager.screens[4].ids.user_test_progress_bar.value = 0
+        self.root.ids.app_screen_manager.screens[3].ids.question_label.font_style = 'H4'
+        self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.value = 0
 
         if len(self.test_settings) < 3:
             # Making sure all test settings has been filled in
@@ -324,28 +321,56 @@ class MainApp(MDApp):
             # Directs user to actual quiz page
             self.root.ids.app_screen_manager.current = "Quiz"
             self.root.ids.app_screen_manager.transition.direction = "right"
+            self.root.ids.app_screen_manager.screens[4].ids.graph_card.clear_widgets()
+            self.clear_leaderboards()
 
     def update_leaderboard(self):
-        addition_leaderboard = self.dbm.get_addition_leaderboard(operator='+')
-        subtraction_leaderboard = self.dbm.get_subtraction_leaderboard(operator='-')
-        division_leaderboard = self.dbm.get_division_leaderboard(operator='/')
-        multiplication_leaderboard = self.dbm.get_multiplication_leaderboard(operator='*')
+        addition_leaderboard = self.dbm.get_leaderboard(operator='+')
+        subtraction_leaderboard = self.dbm.get_leaderboard(operator='-')
+        division_leaderboard = self.dbm.get_leaderboard(operator='/')
+        multiplication_leaderboard = self.dbm.get_leaderboard(operator='*')
 
-        print(run_merge(addition_leaderboard))
+        # print(run_merge(addition_leaderboard))
         addition_table = MDDataTable(
             column_data=[
-                ("Rank", dp(10)),
-                ("Name", dp(30)),
-                ("Speed", dp(15))
+                ("", sp(3)),
+                ("Name", sp(15)),
+                ("Speed", sp(15))
             ],
             row_data=run_merge(addition_leaderboard)
         )
 
-        self.root.ids.app_screen_manager.screens[7].ids.addition_table.add_widget(addition_table)
+        subtraction_table = MDDataTable(
+            column_data=[
+                ("", sp(3)),
+                ("Name", sp(15)),
+                ("Speed", sp(15))
+            ],
+            row_data=run_merge(subtraction_leaderboard)
+        )
 
-        run_merge(subtraction_leaderboard)
-        run_merge(division_leaderboard)
-        run_merge(multiplication_leaderboard)
+        division_table = MDDataTable(
+            column_data=[
+                ("", sp(3)),
+                ("Name", sp(15)),
+                ("Speed", sp(15))
+            ],
+            row_data=run_merge(division_leaderboard)
+        )
+
+        multiplication_table = MDDataTable(
+            column_data=[
+                ("", sp(3)),
+                ("Name", sp(15)),
+                ("Speed", sp(15))
+            ],
+            row_data=run_merge(multiplication_leaderboard)
+        )
+
+        self.root.ids.app_screen_manager.screens[0].ids.addition_table.add_widget(addition_table)
+        self.root.ids.app_screen_manager.screens[0].ids.subtraction_table.add_widget(subtraction_table)
+        self.root.ids.app_screen_manager.screens[0].ids.division_table.add_widget(division_table)
+        self.root.ids.app_screen_manager.screens[0].ids.multiplication_table.add_widget(multiplication_table)
 
     def on_menu_click(self, item_name):
         # When item in menu clicked, menu closes
@@ -358,6 +383,7 @@ class MainApp(MDApp):
         self.root.ids.login_screen_manager.current = "Login"
         self.root.ids.login_screen_manager.transition.direction = "right"
         self.reset_test_page()
+        self.clear_leaderboards()
 
     def clear_register_fields(self):
         self.root.ids.reg_name.text = ""
@@ -402,6 +428,7 @@ class MainApp(MDApp):
             self.root.ids.login_screen_manager.current = "Application"
             self.root.ids.app_screen_manager.transition.direction = "left"
             self.user_name = self.user.name
+            self.update_leaderboard()
             self.clear_register_fields()
         else:
             # Checks if inputted email has already been used to register
@@ -448,21 +475,54 @@ class MainApp(MDApp):
                 self.root.ids.app_screen_manager.current = "Home"
                 self.root.ids.app_screen_manager.transition.direction = "right"
                 self.user_name = self.user.name
+                self.update_leaderboard()
                 self.clear_login_fields()
 
             else:
                 toast("Wrong email or password")
                 self.clear_login_fields()
 
+    def settings(self):
+        old_password = self.root.ids.app_screen_manager.screens[1].ids.old_password.text
+        check_password = self.dbm.check_password(self.user.email, old_password)
+        if check_password:
+            self.dbm.reset_password(self.user.email, self.root.ids.app_screen_manager.screens[1].ids.new_password.text)
+            self.root.ids.app_screen_manager.current = "Home"
+        else:
+            toast('Incorrect password')
+            self.root.ids.app_screen_manager.screens[1].ids.old_password.text = ''
+
+    def hide_show_password(self):
+        if self.root.ids.password.password:
+            self.root.ids.hide_button.icon = 'eye-outline'
+            self.root.ids.password.password = False
+        else:
+            self.root.ids.hide_button.icon = 'eye-off-outline'
+            self.root.ids.password.password = True
+
+    def on_release_button_matplotlib(self):
+        x = [(datetime.utcnow() - timedelta(days=x)) for x in range(7)][::-1]
+        # values_xaxis = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        values_yaxis = [10, 15, 5, 25, 34, 55, 37]
+
+        fix, ax = plt.subplots()
+        # ax.bar(values_xaxis, values_yaxis)
+        ax.bar(x, values_yaxis)
+        plt.ylabel('Visitors per Day')
+        plt.xticks(rotation=30, ha="right")
+        plt.xlabel("Date", labelpad=20)
+        plt.tight_layout()
+        self.root.ids.app_screen_manager.screens[5].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+
 
 MainApp().run()
 
 '''
 TODO:
-- "Save db file into backend python package"
 - Enable update button once something has been changed in settings page
 - Animation for switching screens
-- Python can send emails
 - https://stackoverflow.com/questions/44617793/image-size-on-kivy example of background picture
-- Sort out graph - reset card everytime user goes to results page
+- change email to name in leaderboard
+- use above method to fix updating password in settings
+- fix exiting app before test ends
 '''

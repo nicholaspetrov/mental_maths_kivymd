@@ -2,11 +2,11 @@
     id: test_screen
     name: "Test_results"
 
-    MDBoxLayout:
-        size_hint_y: 0.885
-        padding: [10, 10, 10, 10]
-        orientation: 'vertical'
-        columns: 3
+    MDGridLayout:
+#        size_hint_y: 0.885
+        padding: [40, 80, 40, 10]
+#        orientation: 'vertical'
+        rows: 4
         spacing: 10
         # 3 horizontal cards of same size placed on top of each other
         # Since MDCards built into MDBoxLayout, whenever BoxLayout is stretched, all cards increase in size proportionally
@@ -56,22 +56,6 @@
                         text: ''
                         font_style: "Subtitle1"
 
-                MDBoxLayout:
-                    size_hint: 0.3, 0.75
-                    padding: [10, 10, 10, 10]
-                    orientation: 'vertical'
-                    spacing: 10
-                    MDRaisedButton:
-                        text: " New test "
-                        font_style: "Subtitle1"
-                        pos_hint: {"center_x": 0.7}
-                        on_release: app.on_menu_click("Start test")
-                    MDRaisedButton:
-                        text: "Retry test"
-                        font_style: "Subtitle1"
-                        pos_hint: {"center_x": 0.7}
-                        on_release: app.start_new_test()
-
         MDCard:
             # Middle card
             orientation: 'vertical'
@@ -119,26 +103,25 @@
 
         MDCard:
             orientation: 'vertical'
-            # Bottom card
+#             Bottom card
             id: graph_card
-#            MDLabel:
-#                text: 'Graphs/Charts'
-#                font_style: 'H6'
-#                padding_x: 25
+#            padding: [10, 10, 10, 10]
 
-        # New test and retry test buttons placed in bottom right part of page outside of cards
-#        MDStackLayout:
-#            # Elements in StackLayout stacked from right-to-left and bottom-top (i.e. buttons located at bottom right)
-#            orientation: 'rl-bt'
-#            spacing: 10
-#            padding: 10
-#            MDRaisedButton:
-#                text: "New test"
-#                font_style: "Subtitle1"
-#                pos_hint: {"center_x": 0.7, "center_y": 0}
-#                on_release: app.on_menu_click("Start test")
-#            MDRaisedButton:
-#                text: "Retry test"
-#                font_style: "Subtitle1"
-#                pos_hint: {"center_x": 0.5}
-#                on_release: app.start_new_test()
+
+
+        MDBoxLayout:
+    #            size_hint: 0.3, 0.75
+    #            padding: [10, 10, 10, 10]
+            size_hint_y: None
+            orientation: 'horizontal'
+            spacing: 10
+            MDRaisedButton:
+                text: " New test "
+                font_style: "Subtitle1"
+                pos_hint: {"center_x": 0.65}
+                on_release: app.on_menu_click("Start test")
+            MDRaisedButton:
+                text: "Retry test"
+                font_style: "Subtitle1"
+                pos_hint: {"center_x": 0.35}
+                on_release: app.start_new_test()

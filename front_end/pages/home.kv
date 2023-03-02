@@ -3,16 +3,88 @@
     name: "Home"
 
     MDBoxLayout:
+        padding: [10, 10, 10, 10]
+        size_hint_y: 0.90
         orientation: "vertical"
 
-        MDLabel:
-            text: "Home1"
-            halign: "center"
-            font_style: "H4"
-            size_hint_y: None
+        MDFloatLayout:
+            MDLabel:
+                text: 'Welcome to BrainCalc!'
+                halign: "center"
+                font_style: "H4"
+                size_hint_y: None
+                pos_hint: {"center_x": .5, "center_y": .8}
 
-        MDLabel:
-            text: "Home2"
-            halign: "center"
-            font_style: "H4"
-            size_hint_y: None
+            MDLabel:
+                text: 'An open friendly competition in the 4 basic Maths operations'
+                font_style: 'Caption'
+                halign: "center"
+                size_hint_y: None
+                pos_hint: {"center_x": .5, "center_y": .65}
+
+            MDRaisedButton:
+                text: 'Start now!'
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: app.on_menu_click("Start test")
+
+            MDLabel:
+                text: 'Below is a leaderboard displaying those who achieved the highest points per second speed'
+                font_style: 'Caption'
+                halign: "center"
+                size_hint_y: None
+                pos_hint: {"center_x": .5, "center_y": .3}
+
+            MDLabel:
+                text: 'Have fun!'
+                font_style: 'Caption'
+                halign: "center"
+                size_hint_y: None
+                pos_hint: {"center_x": .5, "center_y": .25}
+
+        MDGridLayout:
+            cols: 4
+            rows: 2
+            spacing: 10
+            MDLabel:
+                size_hint_y: 0.1
+                halign: 'center'
+                text: 'Addition'
+                font_style: 'Subtitle1'
+                bold: True
+
+            MDLabel:
+                size_hint_y: 0.1
+                halign: 'center'
+                text: 'Subtraction'
+                font_style: 'Subtitle1'
+                bold: True
+
+            MDLabel:
+                size_hint_y: 0.1
+                halign: 'center'
+                text: 'Multiplication'
+                font_style: 'Subtitle1'
+                bold: True
+
+            MDLabel:
+                size_hint_y: 0.1
+                halign: 'center'
+                text: 'Division'
+                font_style: 'Subtitle1'
+                bold: True
+
+            MDCard:
+                orientation: 'vertical'
+                id: addition_table
+
+            MDCard:
+                orientation: 'vertical'
+                id: subtraction_table
+
+            MDCard:
+                orientation: 'vertical'
+                id: multiplication_table
+
+            MDCard:
+                orientation: 'vertical'
+                id: division_table

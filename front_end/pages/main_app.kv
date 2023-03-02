@@ -30,7 +30,7 @@ AppLayout:
             MDCard:
                 # Separates screen from actually important login bits
                 size_hint: None, None
-                size: 300, 400
+                size: 360, 400
                 pos_hint: {"center_x": 0.5, "center_y":0.5}
                 padding: 25
                 spacing: 25
@@ -47,26 +47,37 @@ AppLayout:
                 MDTextField:
                     # Input box for email
                     id: email
-                    pos_hint: {"center_x": .5}
+                    pos_hint: {"center_x": .39}
                     size_hint_x: None
-                    width: 200
+                    width: 240
                     hint_text: "Email "
                     helper_text_mode: "on_focus"
                     write_tab: False
                     multiline: False
                     on_text_validate: app.login()
-                MDTextField:
-                    # Input box for password
-                    id: password
-                    hint_text: "Password "
-                    pos_hint: {"center_x": .5}
-                    width: 200
-                    size_hint_x: None
-                    helper_text_mode: "on_focus"
-                    password: True
-                    write_tab: False
-                    multiline: False
-                    on_text_validate: app.login()
+
+                MDGridLayout:
+                    cols: 2
+                    spacing: 20
+                    MDTextField:
+                        # Input box for password
+                        size_hint_x: 0.8
+                        id: password
+                        hint_text: "Password "
+                        pos_hint: {"center_x": .5}
+                        width: 200
+#                        size_hint_x: None
+                        helper_text_mode: "on_focus"
+                        password: True
+                        write_tab: False
+                        multiline: False
+                        on_text_validate: app.login()
+                    MDIconButton:
+                        id: hide_button
+#                        size_hint_x: 0.05
+                        pos_hint: {"center_x": .8}
+                        icon: 'eye-off-outline'
+                        on_press: app.hide_show_password()
 
                 MDRaisedButton:
                     # Login button that when clicked calls login() method in main_app.py
@@ -202,12 +213,13 @@ AppLayout:
                     # Specific pages imported from pages folder - refactored, easier to manage pages
                     Home:
                     Account:
-                    Stats:
+#                    Stats:
                     About:
                     Quiz:
-                    History:
+#                    History:
                     Test_results:
-                    Leaderboard:
+#                    Leaderboard:
+                    Stats
 
                     MDScreen:
                         id: start_test_screen
@@ -341,24 +353,26 @@ AppLayout:
                         MDNavigationDrawerItem:
                             icon: "chart-line"
                             text: "Stats"
-                            on_release: app.on_menu_click(self.text)
-
-                        MDNavigationDrawerItem:
-                            icon: "trophy"
-                            text: "Leaderboard"
                             on_release:
                                 app.on_menu_click(self.text)
-                                app.update_leaderboard()
+#                                app.on_release_button_matplotlib()
+
+#                        MDNavigationDrawerItem:
+#                            icon: "trophy"
+#                            text: "Leaderboard"
+#                            on_release:
+#                                app.on_menu_click(self.text)
+#                                app.update_leaderboard()
 
                         MDNavigationDrawerItem:
                             icon: "account-cog"
                             text: "Account"
                             on_release: app.on_menu_click(self.text)
 
-                        MDNavigationDrawerItem:
-                            icon: "history"
-                            text: "History"
-                            on_release: app.on_menu_click(self.text)
+#                        MDNavigationDrawerItem:
+#                            icon: "history"
+#                            text: "History"
+#                            on_release: app.on_menu_click(self.text)
 
                         MDNavigationDrawerItem:
                             icon: "information-variant"
