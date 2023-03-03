@@ -84,7 +84,7 @@ class FirebaseManager(DatabaseManager):
             return False
 
     # def reset_password(self, email, password):
-    #     users = self.db.collection("users").stream()
+    #     users = self.db.collection("users").document(email)
     #     test_ref = self.db.collection('tests')
     #     salt, hashed_pwd = password_to_denary(password)
     #     a = test_ref.get('user_id').get().to_dict()['name']

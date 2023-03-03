@@ -190,7 +190,8 @@ class MainApp(MDApp):
         plt.ylabel('Points per minute')
         plt.xticks(rotation=20, ha="right")
         plt.xlabel("Date", labelpad=40)
-        # plt.tight_layout()
+        plt.tight_layout()
+        toast('Please maximise screen to view graph fully')
         self.root.ids.app_screen_manager.screens[4].ids.graph_card.add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
         self.update_leaderboard()

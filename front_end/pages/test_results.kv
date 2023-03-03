@@ -106,6 +106,7 @@
 #             Bottom card
             id: graph_card
 #            padding: [10, 10, 10, 10]
+#            size: 300, 600
 
 
 
@@ -115,6 +116,8 @@
             size_hint_y: None
             orientation: 'horizontal'
             spacing: 10
+            MDStackLayout:
+                orientation: 'rl-bt'
             MDRaisedButton:
                 text: " New test "
                 font_style: "Subtitle1"

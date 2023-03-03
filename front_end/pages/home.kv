@@ -22,24 +22,24 @@
                 size_hint_y: None
                 pos_hint: {"center_x": .5, "center_y": .65}
 
-            MDRaisedButton:
-                text: 'Start now!'
-                pos_hint: {"center_x": .5, "center_y": .5}
-                on_release: app.on_menu_click("Start test")
-
             MDLabel:
                 text: 'Below is a leaderboard displaying those who achieved the highest points per second speed'
                 font_style: 'Caption'
                 halign: "center"
                 size_hint_y: None
-                pos_hint: {"center_x": .5, "center_y": .3}
+                pos_hint: {"center_x": .5, "center_y": .5}
 
             MDLabel:
                 text: 'Have fun!'
                 font_style: 'Caption'
                 halign: "center"
                 size_hint_y: None
+                pos_hint: {"center_x": .5, "center_y": .3}
+
+            MDRaisedButton:
+                text: 'Start now!'
                 pos_hint: {"center_x": .5, "center_y": .25}
+                on_release: app.on_menu_click("Start test")
 
         MDGridLayout:
             cols: 4
