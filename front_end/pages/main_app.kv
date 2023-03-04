@@ -313,10 +313,12 @@ AppLayout:
                                                 size_hint: 1/3, 0.1
                                                 on_release: app.duration_menu.open()
                                         # Test image - to be some stats
-                                        Image:
-                                            source: 'images/pie-chart-example.jpg'
-                                            size_hint_x: 0.4
-                                            allow_stretch: True
+#                                        Image:
+#                                            source: 'images/pie-chart-example.jpg'
+#                                            size_hint_x: 0.4
+#                                            allow_stretch: True
+                                        MDCard:
+                                            id: history_graph
 
                             MDRaisedButton:
                                 pos_hint: {"center_x": .5}

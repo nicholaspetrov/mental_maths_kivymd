@@ -85,7 +85,7 @@ class MainApp(MDApp):
             {
                 "text": operator,
                 "viewclass": "OneLineListItem",
-                "on_release": lambda x=f'Operator: {operator}': self.menu_callback('Operator', x.split(' ')[2]),
+                "on_release": lambda x=f'Operator: {operator}': self.menu_callback_operator('Operator', x.split(' ')[2]),
             } for operator in operators
         ]
         self.operator_menu = MDDropdownMenu(
@@ -206,11 +206,33 @@ class MainApp(MDApp):
             if param_name == 'Difficulty':
                 self.screen.ids.difficulty_button.set_item(f'Difficulty: {param_value}')
                 self.difficulty_menu.dismiss()
-            if param_name == 'Operator':
-                self.screen.ids.operator_button.set_item(f'Operator: {param_value}')
-                self.operator_menu.dismiss()
+            # if param_name == 'Operator':
+            #     self.screen.ids.operator_button.set_item(f'Operator: {param_value}')
+            #     self.operator_menu.dismiss()
 
         print(self.test_settings)
+
+    def menu_callback_operator(self, param_name, param_value):
+        self.root.ids.history_graph.clear_widgets()
+        self.test_settings[param_name] = param_value
+        self.screen.ids.operator_button.set_item(f'Operator: {param_value}')
+        self.operator_menu.dismiss()
+
+        test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=param_value)
+        dates = [utils.get_date_string_for_datetime(user_test.time_created) for user_test in test_history]
+        y = [user_test.speed for user_test in test_history]
+        x = []
+        for i in range(1, len(dates)+1):
+            x.append(i)
+
+        fix, ax = plt.subplots()
+        ax.bar(x, y)
+        plt.ylabel('Points per minute')
+        plt.xticks(rotation=20, ha="right")
+        plt.xlabel("Date", labelpad=40)
+        plt.tight_layout()
+        toast('Please maximise screen to view graph fully')
+        self.root.ids.history_graph.add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
     def build(self):
         return self.screen
