@@ -58,15 +58,6 @@ class SqliteManager(DatabaseManager):
                     )
                     ''')
 
-        # c.execute('''
-        #             CREATE TABLE IF NOT EXISTS test_history
-        #             (
-        #             test_history_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        #             timestamp TEXT NOT NULL,
-        #             user_id INTEGER NOT NULL,
-        #             test_id INTEGER NOT NULL
-        #             )
-        #             ''')
         conn.commit()
         self.close_db_conn(conn)
         logger.info('Database tables created successfully')
@@ -137,19 +128,6 @@ class SqliteManager(DatabaseManager):
 
     def check_user_exists(self, email, password):
         pass
-        # try:
-        #     conn = self.get_db_connection()
-        #     c = conn.cursor()
-        #     sql = "SELECT * FROM users WHERE email = ?"
-        #     c.execute(sql, (email,))
-        #     record = c.fetchall()
-        #     if len(record) == 0:
-        #         return False
-        #     return self.check_login(email, password)
-        # except Exception as e:
-        #     return False
-        # finally:
-        #     self.close_db_conn(conn)
 
     def insert_user_test(self, test):
         try:
@@ -180,28 +158,3 @@ class SqliteManager(DatabaseManager):
             logger.error(e)
         finally:
             self.close_db_conn(conn)
-
-
-
-    # def insert_test_history(self, test_history):
-    #     try:
-    #         conn = self.get_db_connection()
-    #         c = conn.cursor()
-    #         sql = '''
-    #         INSERT INTO test_history(timestamp, user_id, test_id)
-    #         VALUES(?, ?, ?)
-    #         '''
-    #         c.execute(
-    #             sql,
-    #             (
-    #                 test_history.timestamp,
-    #                 test_history.user_id,
-    #                 test_history.test_id
-    #             )
-    #         )
-    #         conn.commit()
-    #         self.close_db_conn(conn)
-    #         logger.info('Test has successfully been inserted')
-    #     except Exception as e:
-    #         self.close_db_conn(conn)
-    #         logger.error(e)

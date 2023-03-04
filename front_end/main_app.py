@@ -11,23 +11,12 @@ from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import StringProperty
-from kivy_garden.graph import Graph, SmoothLinePlot, MeshLinePlot
-from kivy_garden.graph import Graph, SmoothLinePlot, MeshLinePlot
-from math import sin
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
 
 from back_end import utils
 from back_end.db.firebase_manager import FirebaseManager
 from back_end.merge_sort import run_merge
-# from back_end.database_manager import create_password_table
-# from back_end.database_manager import insert_into_password_table
-# from back_end.database_manager import check_login
-# from back_end.database_manager import check_user_exists
-
-from back_end.db.sqlite_manager import SqliteManager
-# from back_end import authenticator
 
 from back_end.user import User
 from back_end.usertest import UserTest
@@ -56,14 +45,13 @@ class MainApp(MDApp):
         self.user = User('', '')
         Builder.load_file('pages/home.kv')
         Builder.load_file('pages/account.kv')
-        Builder.load_file('pages/stats.kv')
         Builder.load_file('pages/about.kv')
         Builder.load_file('pages/quiz.kv')
-        # Builder.load_file('pages/history.kv')
         Builder.load_file('pages/test_results.kv')
-        # Builder.load_file('pages/leaderboard.kv')
         self.screen = Builder.load_file('pages/main_app.kv')
 
+        # For generating dropdown listbox for 3 test parameters (difficulty, duration, operator) on test construction
+        # page
         difficulties = ['Easy', 'Medium', 'Hard', 'Mixed']
         difficulty_items = [
             {
@@ -113,6 +101,7 @@ class MainApp(MDApp):
         )
 
     def reset_test_page(self):
+        # Sets page to what it was before test started
         self.root.ids.app_screen_manager.screens[3].ids.question_label.text = "Click 'Next question' to start"
         self.root.ids.app_screen_manager.screens[3].ids.question_label.font_style = 'H4'
         self.root.ids.app_screen_manager.screens[3].ids.answer_input.text = ''
@@ -129,7 +118,7 @@ class MainApp(MDApp):
         self.active = False
         self.root.ids.app_screen_manager.current = 'Test_results'
         self.user_test.calculate_score()
-        print(self.user_test.user_results)
+        # User's score is calculated
         for result in self.user_test.user_results:
             if result[1] > 0:
                 correct_answers += 1
@@ -139,22 +128,29 @@ class MainApp(MDApp):
                 total_possible_points += 2
             else:
                 total_possible_points += 3
+        # Total points that the user could have scored is calculated as well as the points they actually scored
 
         questions_answered = len(self.user_test.user_results)
 
         time = '{:g}'.format(int(self.test_settings["Duration"])/60)
+        # Formats 60s, 120s, etc. into 1 min, 2 min etc.
         number_of_seconds = int(self.test_settings['Duration'])
+        # Used for calculating speed
         # https://stackoverflow.com/questions/13097099/how-to-make-python-print-1-as-opposed-to-1-0
 
         self.root.ids.app_screen_manager.screens[4].ids.difficulty_label.text = self.test_settings['Difficulty']
         self.root.ids.app_screen_manager.screens[4].ids.operator_label.text = self.test_settings['Operator']
         self.root.ids.app_screen_manager.screens[4].ids.duration_label.text = f'{time} min'
+        # Displaying what the settings of the test that just finished were
         speed = round((self.user_test.score / number_of_seconds) * 60, 2)
+        # Speed = points scored by User per minute
 
+        # If not questions were answered
         if questions_answered == 0:
             self.root.ids.app_screen_manager.screens[4].ids.correct_answers_label.text = '0'
             self.root.ids.app_screen_manager.screens[4].ids.speed_label.text = '0'
         else:
+            # If user got a negative score (since questions are subtractive if answered incorrectly)
             if self.user_test.score < 0 or self.user_test.score == 0:
                 self.user_test.score = 0
                 speed = 0
@@ -162,6 +158,7 @@ class MainApp(MDApp):
                 self.root.ids.app_screen_manager.screens[4].ids.correct_answers_label.text = '0'
                 self.root.ids.app_screen_manager.screens[4].ids.speed_label.text = '0'
             else:
+                # Speed, points scored out of total possible, correct out of total questions calculated
                 self.root.ids.app_screen_manager.screens[4].ids.score_label.text = f'{str(self.user_test.score)}/{str(total_possible_points)}'
                 self.root.ids.app_screen_manager.screens[4].ids.correct_answers_label.text = f'{correct_answers}/{questions_answered}'
                 self.root.ids.app_screen_manager.screens[4].ids.speed_label.text = f'{str(speed)} points per minute'
@@ -179,12 +176,16 @@ class MainApp(MDApp):
             number_correct=correct_answers,
             number_incorrect=questions_answered - correct_answers
         )
+        # Test is submitted in tests collection under the User's userid (i.e. email)
         self.dbm.insert_user_test(user_test)
 
         test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=self.test_settings['Operator'])
         x = [utils.get_date_string_for_datetime(user_test.time_created) for user_test in test_history]
+        # x = timestamps of when the operator-specific test was taken
         y = [user_test.speed for user_test in test_history]
+        # y = speeds that the user was answering the questions correctly at
 
+        # Graph is plotted in the test results page
         fix, ax = plt.subplots()
         ax.bar(x, y)
         plt.ylabel('Points per minute')
@@ -194,9 +195,11 @@ class MainApp(MDApp):
         toast('Please maximise screen to view graph fully')
         self.root.ids.app_screen_manager.screens[4].ids.graph_card.add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
+        # Leaderboard is updated (for new user entry/possible overtake)
         self.update_leaderboard()
 
     def menu_callback(self, param_name, param_value):
+        # For the duration and difficulty dropdown listboxes
         if param_name == 'Duration':
             self.test_settings[param_name] = int(param_value.split(' ')[1])*60
             self.screen.ids.duration_button.set_item(param_value)
@@ -206,33 +209,35 @@ class MainApp(MDApp):
             if param_name == 'Difficulty':
                 self.screen.ids.difficulty_button.set_item(f'Difficulty: {param_value}')
                 self.difficulty_menu.dismiss()
-            # if param_name == 'Operator':
-            #     self.screen.ids.operator_button.set_item(f'Operator: {param_value}')
-            #     self.operator_menu.dismiss()
 
         print(self.test_settings)
 
     def menu_callback_operator(self, param_name, param_value):
+        # Listbox label set to what was selected by user
         self.root.ids.history_graph.clear_widgets()
         self.test_settings[param_name] = param_value
         self.screen.ids.operator_button.set_item(f'Operator: {param_value}')
         self.operator_menu.dismiss()
 
+        # When specific operator is selected, graph is generated showing historical performances on that specific
+        # operator
         test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=param_value)
         dates = [utils.get_date_string_for_datetime(user_test.time_created) for user_test in test_history]
         y = [user_test.speed for user_test in test_history]
         x = []
         for i in range(1, len(dates)+1):
             x.append(i)
+        # Instead of dates (unlike graph in results page), x-axis is attempt number
 
         fix, ax = plt.subplots()
         ax.bar(x, y)
         plt.ylabel('Points per minute')
         plt.xticks(rotation=20, ha="right")
-        plt.xlabel("Date", labelpad=40)
+        plt.xlabel("Attempt no.", labelpad=40)
         plt.tight_layout()
         toast('Please maximise screen to view graph fully')
         self.root.ids.history_graph.add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        # Graph is plotted below 3 dropdown listboxes in test construction page once operator is selected
 
     def build(self):
         return self.screen
@@ -242,6 +247,8 @@ class MainApp(MDApp):
         self.root.ids.nav_drawer.set_state("open")
 
     def refocus_ti(self, *args):
+        # Maintains focus on answer input box - user doesn't have to constantly click on box to answer with mouse
+        # (inconvenient)
         self.root.ids.app_screen_manager.screens[3].ids.answer_input.focus = True
 
     def get_next_question(self):
@@ -266,12 +273,12 @@ class MainApp(MDApp):
             self.root.ids.app_screen_manager.screens[3].ids.question_label.bold = True
             # Sets the duration of the horizontal timer progress bar on top of screen based on what was inputted in the
             # prior test construction page
-            # self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
-            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = 5
+            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            # self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = 5
             # Timer + progress bar started
             self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.start()
-            # Clock.schedule_once(self.stop_user_test, self.user_test.duration)
-            Clock.schedule_once(self.stop_user_test, 5)
+            Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+            # Clock.schedule_once(self.stop_user_test, 5)
 
         # Values for points gained or lost after answering the question correctly or incorrectly stored - later used for
         # displaying green and red progress bars
@@ -311,6 +318,8 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[3].ids.question_label.text = ' '.join(map(str, question))
 
     def clear_leaderboards(self):
+        # Clears the leaderboards since if this doesn't take place, the graphs will generate in the same layout -
+        # eventually, the graphs become cluttered and uninterpretable
         self.root.ids.app_screen_manager.screens[0].ids.addition_table.clear_widgets()
         self.root.ids.app_screen_manager.screens[0].ids.subtraction_table.clear_widgets()
         self.root.ids.app_screen_manager.screens[0].ids.division_table.clear_widgets()
@@ -348,6 +357,7 @@ class MainApp(MDApp):
             self.clear_leaderboards()
 
     def update_leaderboard(self):
+        # Each of the 4 leaderboards created
         addition_leaderboard = self.dbm.get_leaderboard(operator='+')
         subtraction_leaderboard = self.dbm.get_leaderboard(operator='-')
         division_leaderboard = self.dbm.get_leaderboard(operator='/')
@@ -360,6 +370,7 @@ class MainApp(MDApp):
                 ("Name", sp(15)),
                 ("Speed", sp(15))
             ],
+            # Merge sort ran on the speeds achieved by the users - sorts them in descending order
             row_data=run_merge(addition_leaderboard)
         )
 
@@ -390,6 +401,7 @@ class MainApp(MDApp):
             row_data=run_merge(multiplication_leaderboard)
         )
 
+        # The 4 leaderboards added to their corresponding card in the Home page
         self.root.ids.app_screen_manager.screens[0].ids.addition_table.add_widget(addition_table)
         self.root.ids.app_screen_manager.screens[0].ids.subtraction_table.add_widget(subtraction_table)
         self.root.ids.app_screen_manager.screens[0].ids.division_table.add_widget(division_table)
@@ -409,6 +421,7 @@ class MainApp(MDApp):
         self.clear_leaderboards()
 
     def clear_register_fields(self):
+        # Empties all input fields
         self.root.ids.reg_name.text = ""
         self.root.ids.reg_email.text = ""
         self.root.ids.reg_password.text = ""
@@ -427,6 +440,7 @@ class MainApp(MDApp):
             return
 
         if not re.fullmatch(self.regex, email.text):
+            # Regular expression used to make sure email is in a correct format e.g. text@text.com
             toast('Invalid email')
             self.root.ids.reg_email.text = ""
             return
@@ -506,36 +520,34 @@ class MainApp(MDApp):
                 self.clear_login_fields()
 
     def settings(self):
+        # Old password retrieved and fed into hashing algorithm to check that the password inputted is correct
         old_password = self.root.ids.app_screen_manager.screens[1].ids.old_password.text
+        new_password = self.root.ids.app_screen_manager.screens[1].ids.new_password.text
         check_password = self.dbm.check_password(self.user.email, old_password)
+        # if old_password != new_password:
+        #     # Validating inputs
+        #     return
+        # elif old_password == '':
+        #     return
+        # elif new_password == '':
+        #     return
+        # else:
         if check_password:
-            self.dbm.reset_password(self.user.email, self.root.ids.app_screen_manager.screens[1].ids.new_password.text)
+            # Password is reset only if current password is correct
+            self.dbm.reset_password(self.user.email, new_password)
             self.root.ids.app_screen_manager.current = "Home"
         else:
             toast('Incorrect password')
             self.root.ids.app_screen_manager.screens[1].ids.old_password.text = ''
 
     def hide_show_password(self):
+        # Hides/show password while also changing the icon of the button
         if self.root.ids.password.password:
             self.root.ids.hide_button.icon = 'eye-outline'
             self.root.ids.password.password = False
         else:
             self.root.ids.hide_button.icon = 'eye-off-outline'
             self.root.ids.password.password = True
-
-    def on_release_button_matplotlib(self):
-        x = [(datetime.utcnow() - timedelta(days=x)) for x in range(7)][::-1]
-        # values_xaxis = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-        values_yaxis = [10, 15, 5, 25, 34, 55, 37]
-
-        fix, ax = plt.subplots()
-        # ax.bar(values_xaxis, values_yaxis)
-        ax.bar(x, values_yaxis)
-        plt.ylabel('Visitors per Day')
-        plt.xticks(rotation=30, ha="right")
-        plt.xlabel("Date", labelpad=20)
-        plt.tight_layout()
-        self.root.ids.app_screen_manager.screens[5].add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
 
 MainApp().run()
@@ -545,7 +557,5 @@ TODO:
 - Enable update button once something has been changed in settings page
 - Animation for switching screens
 - https://stackoverflow.com/questions/44617793/image-size-on-kivy example of background picture
-- change email to name in leaderboard
-- use above method to fix updating password in settings
 - fix exiting app before test ends
 '''
