@@ -77,7 +77,7 @@ AppLayout:
 #                        size_hint_x: 0.05
                         pos_hint: {"center_x": .8}
                         icon: 'eye-off-outline'
-                        on_press: app.hide_show_password()
+                        on_press: app.hide_show_password_login()
 
                 MDRaisedButton:
                     # Login button that when clicked calls login() method in main_app.py
@@ -182,7 +182,7 @@ AppLayout:
                 MDRaisedButton:
                     # Button that submits inputs for registration
                     id: reg_button
-                    text: "Register"
+                    text: "REGISTER"
                     pos_hint: {"center_x": 0.5}
                     on_release:
                         app.register(reg_name, reg_email, reg_password, reg_confirm_password)
@@ -352,11 +352,11 @@ AppLayout:
                             text: "Start test"
                             on_release: app.on_menu_click(self.text)
 
-                        MDNavigationDrawerItem:
-                            icon: "chart-line"
-                            text: "Stats"
-                            on_release:
-                                app.on_menu_click(self.text)
+#                        MDNavigationDrawerItem:
+#                            icon: "chart-line"
+#                            text: "Stats"
+#                            on_release:
+#                                app.on_menu_click(self.text)
 #                                app.on_release_button_matplotlib()
 
 #                        MDNavigationDrawerItem:

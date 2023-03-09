@@ -102,13 +102,22 @@ class MainApp(MDApp):
 
     def reset_test_page(self):
         # Sets page to what it was before test started
+        self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.stop()
         self.root.ids.app_screen_manager.screens[3].ids.question_label.text = "Click 'Next question' to start"
         self.root.ids.app_screen_manager.screens[3].ids.question_label.font_style = 'H4'
         self.root.ids.app_screen_manager.screens[3].ids.answer_input.text = ''
         self.root.ids.app_screen_manager.screens[3].ids.correct_progress_bar.value = 0
         self.root.ids.app_screen_manager.screens[3].ids.incorrect_progress_bar.value = 0
         self.root.ids.app_screen_manager.screens[3].ids.question_label.bold = False
-        self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.stop()
+        # self.active = False
+
+    def reset_dropdown(self):
+        self.test_settings = {}
+        self.screen.ids.difficulty_button.set_item('Difficulty')
+        self.screen.ids.operator_button.set_item('Operator')
+        self.screen.ids.duration_button.set_item('Duration')
+
+    # def plot_graph(self):
 
     def stop_user_test(self, dt):
         self.reset_test_page()
@@ -149,6 +158,7 @@ class MainApp(MDApp):
         if questions_answered == 0:
             self.root.ids.app_screen_manager.screens[4].ids.correct_answers_label.text = '0'
             self.root.ids.app_screen_manager.screens[4].ids.speed_label.text = '0'
+            self.root.ids.app_screen_manager.screens[4].ids.score_label.text = '0'
         else:
             # If user got a negative score (since questions are subtractive if answered incorrectly)
             if self.user_test.score < 0 or self.user_test.score == 0:
@@ -180,9 +190,12 @@ class MainApp(MDApp):
         self.dbm.insert_user_test(user_test)
 
         test_history = self.dbm.get_user_tests_for_operator(email=self.user.email, operator=self.test_settings['Operator'])
-        x = [utils.get_date_string_for_datetime(user_test.time_created) for user_test in test_history]
+        dates = [utils.get_date_string_for_datetime(user_test.time_created) for user_test in test_history]
         # x = timestamps of when the operator-specific test was taken
         y = [user_test.speed for user_test in test_history]
+        x = []
+        for i in range(1, len(dates) + 1):
+            x.append(i)
         # y = speeds that the user was answering the questions correctly at
 
         # Graph is plotted in the test results page
@@ -273,12 +286,12 @@ class MainApp(MDApp):
             self.root.ids.app_screen_manager.screens[3].ids.question_label.bold = True
             # Sets the duration of the horizontal timer progress bar on top of screen based on what was inputted in the
             # prior test construction page
-            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
-            # self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = 5
+            # self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = 10
             # Timer + progress bar started
             self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.start()
-            Clock.schedule_once(self.stop_user_test, self.user_test.duration)
-            # Clock.schedule_once(self.stop_user_test, 5)
+            # Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+            Clock.schedule_once(self.stop_user_test, 10)
 
         # Values for points gained or lost after answering the question correctly or incorrectly stored - later used for
         # displaying green and red progress bars
@@ -418,6 +431,8 @@ class MainApp(MDApp):
         self.root.ids.login_screen_manager.current = "Login"
         self.root.ids.login_screen_manager.transition.direction = "right"
         self.reset_test_page()
+        self.reset_dropdown()
+        self.root.ids.history_graph.clear_widgets()
         self.clear_leaderboards()
 
     def clear_register_fields(self):
@@ -514,7 +529,6 @@ class MainApp(MDApp):
                 self.user_name = self.user.name
                 self.update_leaderboard()
                 self.clear_login_fields()
-
             else:
                 toast("Wrong email or password")
                 self.clear_login_fields()
@@ -523,24 +537,29 @@ class MainApp(MDApp):
         # Old password retrieved and fed into hashing algorithm to check that the password inputted is correct
         old_password = self.root.ids.app_screen_manager.screens[1].ids.old_password.text
         new_password = self.root.ids.app_screen_manager.screens[1].ids.new_password.text
+        confirm_new_password = self.root.ids.app_screen_manager.screens[1].ids.confirm_new_password.text
         check_password = self.dbm.check_password(self.user.email, old_password)
-        # if old_password != new_password:
-        #     # Validating inputs
-        #     return
-        # elif old_password == '':
-        #     return
-        # elif new_password == '':
-        #     return
-        # else:
-        if check_password:
-            # Password is reset only if current password is correct
-            self.dbm.reset_password(self.user.email, new_password)
-            self.root.ids.app_screen_manager.current = "Home"
+        if old_password == '' or new_password == '' or confirm_new_password == '':
+            toast('Password(s) required')
+            return
+        if new_password != confirm_new_password:
+            return
+        if len(new_password) < 6 or len(confirm_new_password) < 6:
+            return
         else:
-            toast('Incorrect password')
-            self.root.ids.app_screen_manager.screens[1].ids.old_password.text = ''
+            if check_password:
+                # Password is reset only if current password is correct
+                self.dbm.reset_password(self.user.email, new_password)
+                toast('Password successfully updated')
+                self.root.ids.app_screen_manager.current = "Home"
+                self.root.ids.app_screen_manager.screens[1].ids.old_password.text = ''
+                self.root.ids.app_screen_manager.screens[1].ids.new_password.text = ''
+                self.root.ids.app_screen_manager.screens[1].ids.confirm_new_password.text = ''
+            else:
+                toast('Incorrect password')
+                self.root.ids.app_screen_manager.screens[1].ids.old_password.text = ''
 
-    def hide_show_password(self):
+    def hide_show_password_login(self):
         # Hides/show password while also changing the icon of the button
         if self.root.ids.password.password:
             self.root.ids.hide_button.icon = 'eye-outline'
@@ -548,6 +567,15 @@ class MainApp(MDApp):
         else:
             self.root.ids.hide_button.icon = 'eye-off-outline'
             self.root.ids.password.password = True
+
+    def hide_show_password_settings(self):
+        # Hides/show password while also changing the icon of the button
+        if self.root.ids.app_screen_manager.screens[1].ids.old_password.password:
+            self.root.ids.app_screen_manager.screens[1].ids.hide_button.icon = 'eye-outline'
+            self.root.ids.app_screen_manager.screens[1].ids.old_password.password = False
+        else:
+            self.root.ids.app_screen_manager.screens[1].ids.hide_button.icon = 'eye-off-outline'
+            self.root.ids.app_screen_manager.screens[1].ids.old_password.password = True
 
 
 MainApp().run()

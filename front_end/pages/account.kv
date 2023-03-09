@@ -18,17 +18,40 @@
             height: self.texture_size[1]
             padding_y: 15
 
-        MDTextField:
-            pos_hint: {"center_x": .5}
-            size_hint_x: None
-            width: 200
-            id: old_password
-            hint_text: "Enter old password "
-            password: True
-            write_tab: False
+        MDGridLayout:
+            cols: 2
+            spacing: 20
+#            MDTextField:
+#                # Input box for password
+#                size_hint_x: 0.8
+#                id: password
+#                hint_text: "Password "
+#                pos_hint: {"center_x": .5}
+#                width: 200
+##                        size_hint_x: None
+#                helper_text_mode: "on_focus"
+#                password: True
+#                write_tab: False
+#                multiline: False
+#                on_text_validate: app.login()
+            MDTextField:
+                pos_hint: {"center_x": .5}
+                size_hint_x: 0.8
+                width: 200
+                id: old_password
+                hint_text: "Enter old password "
+                password: True
+                write_tab: False
+
+            MDIconButton:
+                id: hide_button
+#                        size_hint_x: 0.05
+                pos_hint: {"center_x": .8}
+                icon: 'eye-off-outline'
+                on_press: app.hide_show_password_settings()
 
         MDTextField:
-            pos_hint: {"center_x": .5}
+            pos_hint: {"center_x": .39}
             size_hint_x: None
             width: 200
             id: new_password
@@ -40,7 +63,7 @@
             write_tab: False
 
         MDTextField:
-            pos_hint: {"center_x": .5}
+            pos_hint: {"center_x": .39}
             size_hint_x: None
             width: 200
             id: confirm_new_password
