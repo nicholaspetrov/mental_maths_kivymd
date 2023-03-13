@@ -1,4 +1,5 @@
-import re
+import re, os, sys
+from pathlib import Path
 
 from kivy.metrics import dp, sp
 from kivymd.uix.datatables import MDDataTable
@@ -20,6 +21,11 @@ from back_end.merge_sort import run_merge
 
 from back_end.user import User
 from back_end.usertest import UserTest
+
+p = Path(__file__).resolve().parent.parent
+# print(os.path.dirname(os.path.realpath(__file__).))
+# print(p)
+sys.path.append(str(p))
 
 
 class AppLayout(MDBoxLayout):
@@ -286,12 +292,12 @@ class MainApp(MDApp):
             self.root.ids.app_screen_manager.screens[3].ids.question_label.bold = True
             # Sets the duration of the horizontal timer progress bar on top of screen based on what was inputted in the
             # prior test construction page
-            # self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
-            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = 10
+            self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = self.test_settings['Duration']
+            # self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.running_duration = 10
             # Timer + progress bar started
             self.root.ids.app_screen_manager.screens[3].ids.user_test_progress_bar.start()
-            # Clock.schedule_once(self.stop_user_test, self.user_test.duration)
-            Clock.schedule_once(self.stop_user_test, 10)
+            Clock.schedule_once(self.stop_user_test, self.user_test.duration)
+            # Clock.schedule_once(self.stop_user_test, 10)
 
         # Values for points gained or lost after answering the question correctly or incorrectly stored - later used for
         # displaying green and red progress bars
