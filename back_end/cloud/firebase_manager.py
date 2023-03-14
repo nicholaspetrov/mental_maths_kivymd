@@ -17,8 +17,8 @@ class FirebaseManager(DatabaseManager):
     def __init__(self, db_name=None):
         super().__init__()
         config_file = Path(__file__).resolve().parent / "mental-maths-firebase.json"
-        self.cred = credentials.Certificate(config_file)
-        firebase_admin.initialize_app(self.cred)
+        self.credentials = credentials.Certificate(config_file)
+        firebase_admin.initialize_app(self.credentials)
         self.db = firestore.client()
         # Connection established
 
