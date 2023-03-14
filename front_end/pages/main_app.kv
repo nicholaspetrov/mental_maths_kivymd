@@ -213,13 +213,9 @@ AppLayout:
                     # Specific pages imported from pages folder - refactored, easier to manage pages
                     Home:
                     Account:
-#                    Stats:
                     About:
                     Quiz:
-#                    History:
                     Test_results:
-#                    Leaderboard:
-#                    Stats
 
                     MDScreen:
                         id: start_test_screen
@@ -312,11 +308,6 @@ AppLayout:
                                                 text: "Duration"
                                                 size_hint: 1/3, 0.1
                                                 on_release: app.duration_menu.open()
-                                        # Test image - to be some stats
-#                                        Image:
-#                                            source: 'images/pie-chart-example.jpg'
-#                                            size_hint_x: 0.4
-#                                            allow_stretch: True
                                         MDCard:
                                             id: history_graph
 
@@ -352,29 +343,10 @@ AppLayout:
                             text: "Start test"
                             on_release: app.on_menu_click(self.text)
 
-#                        MDNavigationDrawerItem:
-#                            icon: "chart-line"
-#                            text: "Stats"
-#                            on_release:
-#                                app.on_menu_click(self.text)
-#                                app.on_release_button_matplotlib()
-
-#                        MDNavigationDrawerItem:
-#                            icon: "trophy"
-#                            text: "Leaderboard"
-#                            on_release:
-#                                app.on_menu_click(self.text)
-#                                app.update_leaderboard()
-
                         MDNavigationDrawerItem:
                             icon: "account-cog"
                             text: "Account"
                             on_release: app.on_menu_click(self.text)
-
-#                        MDNavigationDrawerItem:
-#                            icon: "history"
-#                            text: "History"
-#                            on_release: app.on_menu_click(self.text)
 
                         MDNavigationDrawerItem:
                             icon: "information-variant"

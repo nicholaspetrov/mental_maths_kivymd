@@ -21,19 +21,6 @@
         MDGridLayout:
             cols: 2
             spacing: 20
-#            MDTextField:
-#                # Input box for password
-#                size_hint_x: 0.8
-#                id: password
-#                hint_text: "Password "
-#                pos_hint: {"center_x": .5}
-#                width: 200
-##                        size_hint_x: None
-#                helper_text_mode: "on_focus"
-#                password: True
-#                write_tab: False
-#                multiline: False
-#                on_text_validate: app.login()
             MDTextField:
                 pos_hint: {"center_x": .5}
                 size_hint_x: 0.8
@@ -45,7 +32,6 @@
 
             MDIconButton:
                 id: hide_button
-#                        size_hint_x: 0.05
                 pos_hint: {"center_x": .8}
                 icon: 'eye-off-outline'
                 on_press: app.hide_show_password_settings()
@@ -73,14 +59,6 @@
             error: False if confirm_new_password.text=='' else True if confirm_new_password.text!=new_password.text else False
             password: True
             write_tab: False
-
-#        MDBoxLayout:
-#            orientation: 'horizontal'
-#            MDLabel:
-#                text: "Mute sound effects?"
-#            MDSwitch:
-#                pos_hint: {'center_x': .5, 'center_y': .5}
-
 
         MDRaisedButton:
             id: update_button

@@ -5,11 +5,6 @@ import operator
 from datetime import datetime
 
 
-# logger.remove()
-# logger.add(sys.stderr, level="DEBUG")
-# logger.add(sys.stderr, level="ERROR")
-
-
 class UserTest:
     # For scoring points based on difficulty - (1, 1) means a 1 digit number mathematically operated by another
     # 1 digit number

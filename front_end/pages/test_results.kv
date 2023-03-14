@@ -3,9 +3,7 @@
     name: "Test_results"
 
     MDGridLayout:
-#        size_hint_y: 0.885
         padding: [40, 80, 40, 10]
-#        orientation: 'vertical'
         rows: 4
         spacing: 10
         # 3 horizontal cards of same size placed on top of each other
@@ -135,6 +133,5 @@
                 MDRaisedButton:
                     text: "Retry test"
                     font_style: "Subtitle1"
-    #                pos_hint: {"center_x": 0.35}
                     on_release: app.start_new_test()
                 MDWidget:

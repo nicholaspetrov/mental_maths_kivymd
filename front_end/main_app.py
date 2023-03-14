@@ -5,6 +5,7 @@ from kivy.metrics import dp, sp
 from kivymd.uix.datatables import MDDataTable
 from loguru import logger
 from kivy.clock import Clock
+from kivy.config import Config
 
 from kivy.lang import Builder
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -22,9 +23,11 @@ from back_end.merge_sort import run_merge
 from back_end.user import User
 from back_end.usertest import UserTest
 
+Config.set("graphics", "resizable", False)
+Config.set("graphics", "width", "360")
+Config.set("graphics", "height", "680")
+
 p = Path(__file__).resolve().parent.parent
-# print(os.path.dirname(os.path.realpath(__file__).))
-# print(p)
 sys.path.append(str(p))
 
 
@@ -115,7 +118,6 @@ class MainApp(MDApp):
         self.root.ids.app_screen_manager.screens[3].ids.correct_progress_bar.value = 0
         self.root.ids.app_screen_manager.screens[3].ids.incorrect_progress_bar.value = 0
         self.root.ids.app_screen_manager.screens[3].ids.question_label.bold = False
-        # self.active = False
 
     def reset_dropdown(self):
         self.test_settings = {}
@@ -123,7 +125,15 @@ class MainApp(MDApp):
         self.screen.ids.operator_button.set_item('Operator')
         self.screen.ids.duration_button.set_item('Duration')
 
-    # def plot_graph(self):
+    def plot_graph(self, x, y):
+        fix, ax = plt.subplots()
+        ax.bar(x, y)
+        plt.ylabel('Points per minute')
+        plt.xticks(rotation=20, ha="right")
+        plt.xlabel("Attempt no.", labelpad=40)
+        plt.tight_layout()
+        toast('Please maximise screen to view graph fully')
+        return FigureCanvasKivyAgg(plt.gcf())
 
     def stop_user_test(self, dt):
         self.reset_test_page()
@@ -203,16 +213,9 @@ class MainApp(MDApp):
         for i in range(1, len(dates) + 1):
             x.append(i)
         # y = speeds that the user was answering the questions correctly at
-
+        self.plot_graph(x, y)
         # Graph is plotted in the test results page
-        fix, ax = plt.subplots()
-        ax.bar(x, y)
-        plt.ylabel('Points per minute')
-        plt.xticks(rotation=20, ha="right")
-        plt.xlabel("Date", labelpad=40)
-        plt.tight_layout()
-        toast('Please maximise screen to view graph fully')
-        self.root.ids.app_screen_manager.screens[4].ids.graph_card.add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.root.ids.app_screen_manager.screens[4].ids.graph_card.add_widget(self.plot_graph(x, y))
 
         # Leaderboard is updated (for new user entry/possible overtake)
         self.update_leaderboard()
@@ -246,15 +249,9 @@ class MainApp(MDApp):
         x = []
         for i in range(1, len(dates)+1):
             x.append(i)
-        # Instead of dates (unlike graph in results page), x-axis is attempt number
+        # x-axis is attempt number
 
-        fix, ax = plt.subplots()
-        ax.bar(x, y)
-        plt.ylabel('Points per minute')
-        plt.xticks(rotation=20, ha="right")
-        plt.xlabel("Attempt no.", labelpad=40)
-        plt.tight_layout()
-        toast('Please maximise screen to view graph fully')
+        self.plot_graph(x, y)
         self.root.ids.history_graph.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         # Graph is plotted below 3 dropdown listboxes in test construction page once operator is selected
 
