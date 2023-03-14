@@ -1,6 +1,6 @@
 from faker import Faker
 
-from back_end.db.firebase_manager import FirebaseManager
+from back_end.cloud.firebase_manager import FirebaseManager
 from back_end.usertest import UserTest
 
 fake = Faker()

@@ -5,11 +5,11 @@ from back_end.hashing import login
 from back_end.user import User
 from back_end.hashing import password_to_denary
 from back_end.utils import get_string_for_datetime
-from back_end.db.database_manager import DatabaseManager
+from back_end.cloud.database_manager import DatabaseManager
 
 
 class SqliteManager(DatabaseManager):
-    def __init__(self, db_name='mental_database.db'):
+    def __init__(self, db_name='mental_database.cloud'):
         self.db_name = db_name
 
     def get_db_connection(self):

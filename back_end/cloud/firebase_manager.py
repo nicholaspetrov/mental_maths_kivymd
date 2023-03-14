@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from loguru import logger
 
-from back_end.db.database_manager import DatabaseManager
+from back_end.cloud.database_manager import DatabaseManager
 from back_end.hashing import password_to_denary
 from pathlib import Path
 

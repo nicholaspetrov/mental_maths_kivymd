@@ -1,3 +1,9 @@
+from kivy.config import Config
+
+Config.set("graphics", "resizable", False)
+Config.set("graphics", "width", "800")
+Config.set("graphics", "height", "650")
+
 import re, os, sys
 from pathlib import Path
 
@@ -5,7 +11,6 @@ from kivy.metrics import dp, sp
 from kivymd.uix.datatables import MDDataTable
 from loguru import logger
 from kivy.clock import Clock
-from kivy.config import Config
 
 from kivy.lang import Builder
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -17,15 +22,11 @@ from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 import matplotlib.pyplot as plt
 
 from back_end import utils
-from back_end.db.firebase_manager import FirebaseManager
+from back_end.cloud.firebase_manager import FirebaseManager
 from back_end.merge_sort import run_merge
 
 from back_end.user import User
 from back_end.usertest import UserTest
-
-Config.set("graphics", "resizable", False)
-Config.set("graphics", "width", "360")
-Config.set("graphics", "height", "680")
 
 p = Path(__file__).resolve().parent.parent
 sys.path.append(str(p))

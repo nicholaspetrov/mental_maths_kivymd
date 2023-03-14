@@ -1,6 +1,6 @@
 from faker import Faker
 
-from back_end.db.sqlite_manager import SqliteManager
+from back_end.cloud.sqlite_manager import SqliteManager
 from back_end.user import User
 from back_end.usertest import UserTest
 
@@ -9,12 +9,12 @@ fake = Faker()
 
 
 def test_create_tables():
-    dbm = SqliteManager('test.db')
+    dbm = SqliteManager('test.cloud')
     dbm.create_tables()
 
 
 def test_insert_user():
-    dbm = SqliteManager('test.db')
+    dbm = SqliteManager('test.cloud')
     user = User(
         name=fake.name(),
         email=fake.email(),
@@ -25,7 +25,7 @@ def test_insert_user():
 
 
 def test_insert_test():
-    dbm = SqliteManager('test.db')
+    dbm = SqliteManager('test.cloud')
     user = dbm.insert_user(fake.name(), fake.email(), fake.password(6))
     test = UserTest(
         user_id=user.user_id,
